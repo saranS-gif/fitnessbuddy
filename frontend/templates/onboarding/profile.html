@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+
+{% block title %}Onboarding | FitBuddy AI{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/onboarding.css">
+{% endblock %}
+
+{% block content %}
+<div class="onboarding-wrapper">
+  <div class="wizard-card">
+    <!-- Wizard Header & Progress Bar -->
+    <div class="wizard-header" id="wizard-header">
+      <div class="wizard-meta">
+        <span class="step-label" id="step-label">Step 1 of 8</span>
+        <span class="step-counter" id="step-name">Welcome</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width: 12.5%;"></div>
+      </div>
+    </div>
+
+    <!-- Error State Display (Hidden by default) -->
+    <div id="wizard-error" class="error-card" style="display: none;">
+      <h4 style="margin-bottom: 0.25rem;">Your plan couldn't be generated right now.</h4>
+      <p id="wizard-error-msg" style="font-size: 0.85rem; color: #7f1d1d; margin-bottom: 1rem;">
+        We encountered a temporary processing delay. Please try again or go back to review your parameters.
+      </p>
+      <div style="display: flex; gap: 0.75rem;">
+        <button type="button" class="btn btn-primary btn-sm" onclick="retryGeneration()">TRY AGAIN</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="showStep(8)">GO BACK</button>
+      </div>
+    </div>
+
+    <!-- AI Generation Processing Screen (Section 9) -->
+    <div id="ai-processing" class="ai-processing-overlay">
+      <div class="ai-pulse-spinner">⚡</div>
+      <div class="stage-text" id="ai-stage-text">Analyzing your profile...</div>
+      <p class="stage-subtext">Gemini AI is crafting your customized 7-day science-backed regimen.</p>
+    </div>
+
+    <!-- Form & Steps Container -->
+    <form id="onboarding-form" onsubmit="event.preventDefault();">
+      <!-- STEP 1: Welcome -->
+      <div class="wizard-step active" id="step-1">
+        <h2 class="step-heading">Welcome to FitBuddy 👋</h2>
+        <p class="step-desc">
+          Let’s build your personalized AI fitness companion. We'll ask a few quick questions about your body, goals, and schedule to engineer a custom 7-day regimen.
+        </p>
+        <div style="background: var(--surface-alt); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 2rem;">
+          <h4 style="margin-bottom: 0.5rem; color: var(--text-primary);">What to expect:</h4>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.95rem; color: var(--text-secondary);">
+            <li>✓ Custom 7-day workout split (exercises, sets, reps, rest)</li>
+            <li>✓ Targeted macro & hydration guidelines</li>
+            <li>✓ Adaptive feedback loop that evolves with your fatigue</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- STEP 2: Personal Information -->
+      <div class="wizard-step" id="step-2">
+        <h2 class="step-heading">Personal Information</h2>
+        <p class="step-desc">Provide your basic measurements to calibrate training loads accurately.</p>
+
+        <div class="form-group">
+          <label class="form-label" for="user-name">Your Full Name</label>
+          <input type="text" id="user-name" class="form-control" placeholder="e.g. Jordan Smith" required autocomplete="name">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="user-age">Age</label>
+            <input type="number" id="user-age" class="form-control" placeholder="26" min="12" max="100" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="user-weight">Current Weight (kg)</label>
+            <input type="number" id="user-weight" class="form-control" placeholder="72.5" step="0.5" min="20" max="300" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Fitness Goal -->
+      <div class="wizard-step" id="step-3">
+        <h2 class="step-heading">Your Primary Fitness Goal</h2>
+        <p class="step-desc">Choose the primary objective your workout plan should be optimized for.</p>
+
+        <div class="selection-grid">
+          <div class="select-card selected" onclick="selectSingle('goal', 'Muscle Gain', this)">
+            <div class="card-icon">💪</div>
+            <div class="card-title">Muscle Gain</div>
+            <div class="card-subtitle">Hypertrophy & raw strength</div>
+          </div>
+          <div class="select-card" onclick="selectSingle('goal', 'Weight Loss', this)">
+            <div class="card-icon">🔥</div>
+            <div class="card-title">Weight Loss</div>
+            <div class="card-subtitle">Metabolic fat burn & tone</div>
+          </div>
+          <div class="select-card" onclick="selectSingle('goal', 'General Fitness', this)">
+            <div class="card-icon">⚡</div>
+            <div class="card-title">General Fitness</div>
+            <div class="card-subtitle">Functional vitality & health</div>
+          </div>
+          <div class="select-card" onclick="selectSingle('goal', 'Flexibility', this)">
+            <div class="card-icon">🧘</div>
+            <div class="card-title">Flexibility</div>
+            <div class="card-subtitle">Mobility & joint health</div>
+          </div>
+          <div class="select-card" onclick="selectSingle('goal', 'General Wellness', this)">
+            <div class="card-icon">🌿</div>
+            <div class="card-title">General Wellness</div>
+            <div class="card-subtitle">Longevity & mental clarity</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: Workout Intensity -->
+      <div class="wizard-step" id="step-4">
+        <h2 class="step-heading">Workout Intensity</h2>
+        <p class="step-desc">Select your desired effort level per training session.</p>
+
+        <div class="selection-grid" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="select-card" onclick="selectSingle('intensity', 'Low', this)">
+            <div class="card-icon">🌱</div>
+            <div class="card-title">Low</div>
+            <div class="card-subtitle">Steady, joint-friendly pacing</div>
+          </div>
+          <div class="select-card selected" onclick="selectSingle('intensity', 'Medium', this)">
+            <div class="card-icon">⚡</div>
+            <div class="card-title">Medium</div>
+            <div class="card-subtitle">Balanced challenge & recovery</div>
+          </div>
+          <div class="select-card" onclick="selectSingle('intensity', 'High', this)">
+            <div class="card-icon">🔥</div>
+            <div class="card-title">High</div>
+            <div class="card-subtitle">Demanding progressive overload</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5: Experience -->
+      <div class="wizard-step" id="step-5">
+        <h2 class="step-heading">Training Experience</h2>
+        <p class="step-desc">How familiar are you with structured resistance and exercise movements?</p>
+
+        <div class="selection-grid" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="select-card selected" onclick="selectSingle('experience', 'Beginner', this)">
+            <div class="card-icon">🎯</div>
+            <div class="card-title">Beginner</div>
+            <div class="card-subtitle">&lt; 1 year of consistent training</div>
+          </div>
+          <div class="select-card" onclick="selectSingle('experience', 'Intermediate', this)">
+            <div class="card-icon">🏆</div>
+            <div class="card-title">Intermediate</div>
+            <div class="card-subtitle">1–3 years of regular workouts</div>
+          </div>
+          <div class="select-card" onclick="selectSingle('experience', 'Advanced', this)">
+            <div class="card-icon">🥇</div>
+            <div class="card-title">Advanced</div>
+            <div class="card-subtitle">3+ years mastering execution</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 6: Workout Location -->
+      <div class="wizard-step" id="step-6">
+        <h2 class="step-heading">Workout Location</h2>
+        <p class="step-desc">Where do you perform the majority of your workouts?</p>
+
+        <div class="selection-grid" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="select-card selected" onclick="selectSingle('workout_location', 'Home', this)">
+            <div class="card-icon">🏠</div>
+            <div class="card-title">Home</div>
+            <div class="card-subtitle">Bodyweight, mats & dumbbells</div>
+          </div>
+          <div class="select-card" onclick="selectSingle('workout_location', 'Gym', this)">
+            <div class="card-icon">🏋️</div>
+            <div class="card-title">Gym</div>
+            <div class="card-subtitle">Barbells, cables & machines</div>
+          </div>
+          <div class="select-card" onclick="selectSingle('workout_location', 'Outdoor', this)">
+            <div class="card-icon">🌲</div>
+            <div class="card-title">Outdoor</div>
+            <div class="card-subtitle">Parks, running tracks & calisthenics</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 7: Preferred Workout Days (Multiple Selection) -->
+      <div class="wizard-step" id="step-7">
+        <h2 class="step-heading">Preferred Workout Days</h2>
+        <p class="step-desc">Select the days of the week you plan to train (remaining days will be programmed as recovery).</p>
+
+        <div class="day-selector-grid">
+          <div class="day-pill-card selected" data-day="Monday" onclick="toggleDay(this)">Monday</div>
+          <div class="day-pill-card" data-day="Tuesday" onclick="toggleDay(this)">Tuesday</div>
+          <div class="day-pill-card selected" data-day="Wednesday" onclick="toggleDay(this)">Wednesday</div>
+          <div class="day-pill-card" data-day="Thursday" onclick="toggleDay(this)">Thursday</div>
+          <div class="day-pill-card selected" data-day="Friday" onclick="toggleDay(this)">Friday</div>
+          <div class="day-pill-card" data-day="Saturday" onclick="toggleDay(this)">Saturday</div>
+          <div class="day-pill-card" data-day="Sunday" onclick="toggleDay(this)">Sunday</div>
+        </div>
+      </div>
+
+      <!-- STEP 8: Review & Generate -->
+      <div class="wizard-step" id="step-8">
+        <h2 class="step-heading">Review Profile</h2>
+        <p class="step-desc">Verify your details before FitBuddy Gemini generates your custom 7-day plan.</p>
+
+        <div class="review-summary" id="review-summary-box">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Wizard Navigation Controls -->
+      <div class="wizard-footer" id="wizard-footer">
+        <button type="button" class="btn btn-secondary" id="btn-back" onclick="prevStep()" style="visibility: hidden;">
+          ← Back
+        </button>
+        <button type="button" class="btn btn-primary" id="btn-next" onclick="nextStep()">
+          Next →
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/onboarding.js"></script>
+{% endblock %}

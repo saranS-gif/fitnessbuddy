@@ -13,7 +13,10 @@ if not exist venv (
 )
 
 if not exist .env (
-    if exist .env.example (
+    if exist config\.env.example (
+        echo [FitBuddy] Creating .env from config\.env.example...
+        copy config\.env.example .env
+    ) else if exist .env.example (
         echo [FitBuddy] Creating .env from .env.example...
         copy .env.example .env
     )
@@ -25,5 +28,6 @@ venv\Scripts\python.exe -m pip install -r requirements.txt
 echo ===================================================
 echo [FitBuddy] Setup complete! Starting FitBuddy...
 echo ===================================================
+set PYTHONPATH=%~dp0backend;%~dp0;%PYTHONPATH%
 venv\Scripts\python.exe run.py
 pause

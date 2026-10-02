@@ -1,0 +1,231 @@
+/* ===============================================================
+   FITBUDDY ONBOARDING WIZARD STYLES
+   =============================================================== */
+
+.onboarding-wrapper {
+  max-width: 680px;
+  margin: 3.5rem auto;
+  padding: 0 1.5rem;
+}
+
+.wizard-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-md);
+  position: relative;
+}
+
+.wizard-header {
+  margin-bottom: 2rem;
+}
+
+.wizard-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.step-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.step-counter {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* Onboarding Step Sections */
+.wizard-step {
+  display: none;
+}
+
+.wizard-step.active {
+  display: block;
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.step-heading {
+  font-size: 1.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.step-desc {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+/* Selection Cards Grid */
+.selection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.select-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  user-select: none;
+}
+
+.select-card:hover {
+  border-color: var(--primary);
+  background-color: var(--surface-alt);
+}
+
+.select-card.selected {
+  border-color: var(--primary);
+  background-color: var(--primary-light);
+  box-shadow: 0 0 0 1px var(--primary);
+}
+
+.select-card .card-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.select-card .card-title {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.select-card .card-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* Day selector pills */
+.day-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.day-pill-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+  text-align: center;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.day-pill-card:hover {
+  border-color: var(--primary);
+}
+
+.day-pill-card.selected {
+  background-color: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+}
+
+/* Wizard Navigation Controls */
+.wizard-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+/* Review Summary List */
+.review-summary {
+  background: var(--surface-alt);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.review-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  padding-bottom: 0.5rem;
+}
+
+.review-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.review-label {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.review-val {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* AI Generation Processing Screen */
+.ai-processing-overlay {
+  display: none;
+  text-align: center;
+  padding: 2.5rem 1rem;
+}
+
+.ai-pulse-spinner {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1.5rem;
+  border-radius: 50%;
+  background: var(--primary-light);
+  border: 3px solid var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  animation: pulseScale 1.5s infinite;
+}
+
+@keyframes pulseScale {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  70% { transform: scale(1.05); box-shadow: 0 0 0 16px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.stage-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  min-height: 36px;
+}
+
+.stage-subtext {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}

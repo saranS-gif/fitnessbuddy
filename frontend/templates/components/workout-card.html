@@ -1,0 +1,13 @@
+<div class="card daily-card {{ 'completed' if daily.is_completed else '' }}" id="daily-card-{{ daily.id }}">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+    <span class="badge badge-accent">Day {{ daily.day_number }}</span>
+    <span style="font-size: 0.8rem; color: var(--text-muted);">{{ daily.estimated_duration_min }} mins</span>
+  </div>
+  <h3>{{ daily.day_name }}</h3>
+  <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">{{ daily.focus_area }}</p>
+  
+  <div style="margin-top: 1.25rem; display: flex; gap: 0.5rem;">
+    <a href="/dashboard/daily-workout?id={{ daily.id }}" class="btn btn-secondary btn-sm" style="flex: 1;">View Exercises</a>
+    <button onclick="toggleDailyWorkout('{{ daily.id }}')" class="btn btn-primary btn-sm">Done</button>
+  </div>
+</div>

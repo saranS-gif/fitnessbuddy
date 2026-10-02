@@ -1,0 +1,99 @@
+/* ===============================================================
+   FITBUDDY RESPONSIVE BREAKPOINTS (320px to 1440px+)
+   =============================================================== */
+
+/* Large Desktops */
+@media (min-width: 1440px) {
+  .container {
+    max-width: 1320px;
+  }
+}
+
+/* Tablets and Below (< 1024px) */
+@media (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  .features-3col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tablets (< 768px) */
+@media (max-width: 768px) {
+  .dash-sidebar {
+    display: none;
+  }
+  
+  .mobile-bottom-nav {
+    display: flex;
+  }
+
+  .dash-content {
+    padding: 1.5rem 1rem 5rem;
+  }
+
+  .nav-menu {
+    gap: 1rem;
+  }
+
+  .hero-title {
+    font-size: 2.35rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.05rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+  }
+
+  .mockup-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mockup-days-row {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .week-schedule-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .metrics-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Small Mobile Screens (320px - 390px) */
+@media (max-width: 480px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  .wizard-card {
+    padding: 1.5rem 1rem;
+  }
+
+  .week-schedule-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .selection-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .hero-title {
+    font-size: 1.95rem;
+  }
+
+  .dash-greeting {
+    font-size: 1.5rem;
+  }
+}

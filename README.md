@@ -1,14 +1,108 @@
 # FitBuddy — AI Personal Fitness Companion
 > **"Your Workout. Designed Around You."**
 
-FitBuddy is a complete, single-application AI fitness planning web application powered by **FastAPI**, **Google Gemini AI**, **SQLite**, and **Vanilla HTML5/CSS3/JavaScript**.
+FitBuddy is an intelligent fitness and nutrition planning web application powered by **FastAPI**, **Google Gemini AI**, **SQLite**, and modern **HTML5/CSS3/JavaScript**.
 
 ---
 
-## 1. Quick Start (Windows)
+## 1. Clean Architecture Overview
+
+FitBuddy is organized with strict separation of frontend, backend, configuration, and documentation:
+
+```text
+fitness.ai/
+│
+├── frontend/                          # Client-Side Presentation Layer
+│   ├── static/                        # Static assets (CSS stylesheets, JS scripts, icons, images)
+│   │   ├── css/                       # Modular CSS (style, components, dashboard, etc.)
+│   │   ├── js/                        # Client-side JS (main, onboarding, dashboard, workout, etc.)
+│   │   ├── images/                    # Logos, hero images, exercise icons
+│   │   └── fonts/                     # Web fonts
+│   └── templates/                     # Jinja2 HTML Templates
+│       ├── admin/                     # Admin portal views
+│       ├── components/                # Reusable partials (navbar, cards, toast)
+│       ├── dashboard/                 # User dashboard sub-views
+│       ├── feedback/                  # Plan revision & feedback views
+│       ├── onboarding/                # Multi-step onboarding views
+│       ├── public/                    # Landing and informational pages
+│       ├── base.html                  # Base HTML layout
+│       ├── index.html                 # Main landing page
+│       ├── onboarding.html            # User onboarding questionnaire
+│       ├── dashboard.html             # User 7-day dashboard
+│       ├── workout.html               # Single workout viewer
+│       ├── feedback.html              # Plan adjustment form
+│       ├── history.html               # Plan revision timeline
+│       └── admin.html                 # Administrator portal
+│
+├── backend/                           # Server-Side Application Layer
+│   └── app/                           # Core FastAPI application package
+│       ├── ai/                        # AI prompt engineering & Gemini integration
+│       │   ├── gemini.py              # Gemini client and JSON schema parser
+│       │   ├── prompts.py             # System and user prompts
+│       │   ├── workout_generator.py   # Workout generation engine
+│       │   ├── nutrition_generator.py # Nutrition planning engine
+│       │   └── plan_updater.py        # Feedback plan modifier
+│       ├── database/                  # SQLAlchemy engine, session, and init
+│       │   └── database.py            # SQLite database connection setup
+│       ├── models/                    # Database ORM models
+│       │   ├── user.py                # User profile model
+│       │   ├── workout.py             # WorkoutPlan and PlanRevision models
+│       │   ├── feedback.py            # User feedback model
+│       │   └── admin.py               # Administrator model
+│       ├── schemas/                   # Pydantic data validation schemas
+│       │   ├── user.py                # User request/response schemas
+│       │   ├── workout.py             # Workout & nutrition schemas
+│       │   └── feedback.py            # Feedback schemas
+│       ├── services/                  # Business logic services
+│       │   ├── user_service.py        # User operations
+│       │   ├── workout_service.py     # Workout plan orchestration
+│       │   ├── feedback_service.py    # Feedback & revision handling
+│       │   └── admin_service.py       # Admin operations
+│       ├── routes/                    # API & Web route controllers
+│       │   ├── workout_routes.py      # Workout plan endpoints
+│       │   ├── user_routes.py         # User management endpoints
+│       │   ├── feedback_routes.py     # Revision endpoints
+│       │   ├── admin_routes.py        # Admin panel endpoints
+│       │   └── web_routes.py          # HTML page routes
+│       ├── utils/                     # Helpers & security
+│       │   ├── security.py            # JWT and password hashing
+│       │   └── helpers.py             # Common utilities
+│       ├── config.py                  # Settings adapter
+│       ├── dependencies.py            # Request dependencies
+│       └── main.py                    # FastAPI application initialization
+│
+├── config/                            # Configuration & Environment
+│   ├── settings.py                    # Central Pydantic BaseSettings
+│   └── .env.example                   # Environment variable template
+│
+├── docs/                              # Technical Documentation
+│   ├── ARCHITECTURE.md                # System structure and design patterns
+│   ├── API.md                         # API endpoints and specification
+│   └── SETUP.md                       # Comprehensive setup & developer guide
+│
+├── tests/                             # Automated Test Suite
+│   ├── conftest.py                    # Test configuration and fixtures
+│   ├── test_app.py                    # End-to-end integration tests
+│   ├── test_workouts.py               # Workout generation tests
+│   ├── test_feedback.py               # Revision & feedback tests
+│   ├── test_users.py                  # User management tests
+│   └── test_admin.py                  # Admin authentication tests
+│
+├── main.py                            # Root ASGI entrypoint (Vercel & Uvicorn compatible)
+├── run.py                             # Local development launcher
+├── run.bat                            # Windows one-click runner
+├── setup.bat                          # Windows one-click environment installer
+├── requirements.txt                   # Project Python dependencies
+├── pyproject.toml                     # Pytest and project settings
+└── README.md                          # Project overview
+```
+
+---
+
+## 2. Quick Start (Windows)
 
 ### The Easiest Way: One-Click Setup & Run
-To install everything and start the app automatically, double-click or run:
+To install everything and start the app automatically, double-click:
 ```cmd
 setup.bat
 ```
@@ -21,51 +115,23 @@ run.bat
 
 ### Manual Setup (Step-by-Step)
 
-If you prefer to run commands manually in PowerShell or Windows Command Prompt:
-
-#### 1. Navigate to the project directory:
 ```powershell
-cd "c:\Users\SARAN S\OneDrive\Desktop\fitness.ai"
-```
-
-#### 2. Create the Python virtual environment:
-```powershell
+# 1. Create the virtual environment
 python -m venv venv
-```
 
-#### 3. Install required dependencies:
-```powershell
+# 2. Install dependencies
 venv\Scripts\python.exe -m pip install -r requirements.txt
-```
 
-#### 4. Configure environment variables:
-```powershell
-copy .env.example .env
-```
-Open `.env` and set your Google Gemini API key:
-```env
-APP_NAME=FitBuddy
-APP_ENV=development
-DEBUG=True
-PORT=8000
-HOST=127.0.0.1
+# 3. Configure environment
+copy config\.env.example .env
 
-DATABASE_URL=sqlite:///./fitbuddy.db
-
-# Google Gemini AI Settings
-GEMINI_API_KEY=your_gemini_api_key_here
-GEMINI_MODEL=gemini-1.5-flash
-```
-*(FitBuddy accepts both modern `AQ.` format keys and legacy `AIza` keys).*
-
-#### 5. Start FitBuddy:
-```powershell
+# 4. Start the application
 venv\Scripts\python.exe run.py
 ```
 
 ---
 
-## 2. Accessing the Application
+## 3. Accessing the Application
 
 - **Web Application:** [http://127.0.0.1:8000](http://127.0.0.1:8000)
 - **Onboarding Questionnaire:** [http://127.0.0.1:8000/onboarding](http://127.0.0.1:8000/onboarding)
@@ -74,93 +140,18 @@ venv\Scripts\python.exe run.py
 
 ---
 
-## 3. Project Architecture & Structure
+## 4. Documentation
 
-```
-FitBuddy/
-│
-├── app/
-│   ├── __init__.py
-│   ├── main.py                  # FastAPI server, page routing & API endpoints
-│   ├── config.py                # Environment configuration & settings
-│   ├── database.py              # SQLite connection & table initialization
-│   ├── models.py                # SQLAlchemy models (User, WorkoutPlan, PlanRevision, Feedback)
-│   ├── schemas.py               # Pydantic schemas for data validation
-│   │
-│   ├── ai/
-│   │   ├── __init__.py
-│   │   ├── gemini.py            # Gemini API client, JSON parser & prompt engine
-│   │   └── workout_generator.py # Deterministic 7-day fallback routine generator
-│   │
-│   ├── services/
-│   │   ├── __init__.py
-│   │   └── workout_service.py   # Business logic (plan generation, revisions, feedback)
-│   │
-│   ├── templates/               # Jinja2 HTML templates
-│   │   ├── index.html           # Professional SaaS landing page
-│   │   ├── onboarding.html      # User biometrics & preferences form
-│   │   ├── loading.html         # Loading state screen
-│   │   ├── dashboard.html       # 7-day workout split & nutrition guide
-│   │   ├── workout.html         # Single workout day session view
-│   │   ├── feedback.html        # "Improve My Plan" adaptive feedback form
-│   │   ├── history.html         # Plan revision timeline & comparison
-│   │   └── admin.html           # Administrator user management
-│   │
-│   └── static/
-│       ├── css/
-│       │   └── style.css        # Clean, modern, responsive CSS design
-│       └── js/
-│           ├── app.js           # API request helpers & toast notifications
-│           ├── onboarding.js    # Interactive form & plan generation logic
-│           ├── workout.js       # 7-day cards & day completion tracking
-│           └── feedback.js      # Feedback submission & version update logic
-│
-├── tests/
-│   ├── __init__.py
-│   └── test_app.py              # Automated test suite (Pytest)
-│
-├── .env                         # Local environment configuration
-├── .env.example                 # Example configuration template
-├── .gitignore                   # Ignored files (venv, .env, __pycache__)
-├── requirements.txt             # Minimal Python dependencies
-├── run.py                       # Application entrypoint
-├── run.bat                      # One-click startup script for Windows
-├── setup.bat                    # One-click installation & startup script
-└── README.md                    # Project documentation
-```
+Detailed documentation is available in the `docs/` folder:
+- [Architecture Guide](docs/ARCHITECTURE.md)
+- [API Reference](docs/API.md)
+- [Setup & Developer Guide](docs/SETUP.md)
 
 ---
 
-## 4. How Plan Generation Works
+## 5. Running Tests
 
-1. **User Input:**
-   The user enters Name, Age, Weight, Height, Goal, Intensity, Experience, Location, Available Equipment, and Preferred Days.
-2. **API Endpoint (`POST /api/generate`):**
-   FastAPI validates the payload using Pydantic (`UserCreate`) and persists the user record in SQLite.
-3. **Gemini AI Call:**
-   `app/ai/gemini.py` constructs a structured prompt requesting strict JSON.
-   The model returns:
-   - Summary and weekly physiological goal
-   - 7 days (Monday through Sunday) with focus, warm-up, exercises (sets, reps, rest, cues), cooldown, and recovery
-   - Nutrition targets (calories, protein, hydration, tips)
-4. **Fallback Resilience:**
-   If the Gemini API key is missing or invalid, or if Google's API encounters an issue, FitBuddy automatically engages `generate_fallback_plan()`. The website never crashes and provides a high-quality 7-day plan.
-5. **Persistence & Versioning:**
-   The plan is saved to `workout_plans` with Version 1 stored in `plan_revisions`.
-
----
-
-## 5. Adaptive Feedback & Revision History
-
-- When you request changes (e.g., *"Add more cardio"*, *"Make workouts easier"*, *"More rest days"*), FitBuddy sends your feedback, profile, and current plan to Gemini via `POST /api/feedback`.
-- **The original plan is NEVER overwritten.**
-- A new version (Version 2, 3, etc.) is created and displayed, while previous versions remain inspectable in `/history`.
-
----
-
-## 6. Running Tests
-
-Run the test suite with:
+Run the full pytest suite:
 ```powershell
-venv\Scripts\python.exe -m pytest tests/test_app.py -v
+venv\Scripts\python.exe -m pytest tests
 ```

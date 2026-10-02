@@ -1,0 +1,1 @@
+"""FitBuddy Configuration Package."""

@@ -10,5 +10,6 @@ if not exist venv\Scripts\python.exe (
     pause
     exit /b 1
 )
+set PYTHONPATH=%~dp0backend;%~dp0;%PYTHONPATH%
 venv\Scripts\python.exe run.py
 pause

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Workout Detail | FitBuddy AI{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/dashboard.css">
+<link rel="stylesheet" href="/static/css/workout.css">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container" id="workout-detail-root">
+  {% include "components/sidebar.html" %}
+
+  <main class="dash-content">
+    <div class="workout-detail-wrapper">
+      <!-- Back Link & Header -->
+      <a href="/dashboard" style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; color: var(--primary); font-size: 0.9rem; margin-bottom: 1.5rem;">
+        ← Back to Dashboard
+      </a>
+
+      <div class="workout-detail-header">
+        <div>
+          <span class="badge badge-emerald" id="detail-day-tag">Monday</span>
+          <h1 id="detail-title" style="font-size: 2rem; margin-top: 0.5rem; color: var(--text-primary);">
+            Loading Workout...
+          </h1>
+          <p style="color: var(--text-secondary); font-size: 0.95rem; margin-top: 0.25rem;">
+            Designed by FitBuddy Gemini AI
+          </p>
+        </div>
+
+        <div>
+          <button id="btn-complete" class="btn btn-primary" onclick="toggleCompletion()">
+            Mark As Complete
+          </button>
+        </div>
+      </div>
+
+      <!-- Warm-up Section -->
+      <div class="routine-phase-box">
+        <div class="phase-heading">
+          <span>🔥</span> Dynamic Warm-up Protocol
+        </div>
+        <ul class="phase-list" id="warmup-list">
+          <!-- Populated by JS -->
+        </ul>
+      </div>
+
+      <!-- Main Exercises Stack -->
+      <h3 style="font-size: 1.35rem; margin-bottom: 1rem;">Primary Exercises</h3>
+      <div class="exercise-cards-stack" id="exercises-stack">
+        <!-- Rendered by workout.js -->
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+      </div>
+
+      <!-- Cooldown Section -->
+      <div class="routine-phase-box">
+        <div class="phase-heading">
+          <span>❄️</span> Cooldown & Joint Mobility
+        </div>
+        <ul class="phase-list" id="cooldown-list">
+          <!-- Populated by JS -->
+        </ul>
+      </div>
+
+      <!-- Recovery Recommendation -->
+      <div class="recovery-box">
+        <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 0.5rem;">
+          <span>🧘</span> Recovery & Nutrition Protocol
+        </div>
+        <p id="recovery-text" style="font-size: 0.95rem; color: var(--text-primary); margin: 0; line-height: 1.6;">
+          Hydrate adequately and ingest protein within 60-90 minutes.
+        </p>
+      </div>
+    </div>
+  </main>
+</div>
+
+{% include "components/bottom-nav.html" %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/workout.js"></script>
+{% endblock %}

@@ -38,9 +38,16 @@ app = FastAPI(
 
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent
-TEMPLATES_DIR = BASE_DIR / "templates"
-STATIC_DIR = BASE_DIR / "static"
+# Resolve frontend directories
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+TEMPLATES_DIR = PROJECT_ROOT / "frontend" / "templates"
+STATIC_DIR = PROJECT_ROOT / "frontend" / "static"
+
+if not TEMPLATES_DIR.exists():
+    TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
+if not STATIC_DIR.exists():
+    STATIC_DIR = Path(__file__).resolve().parent / "static"
+
 STATIC_DIR.mkdir(parents=True, exist_ok=True)
 
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")

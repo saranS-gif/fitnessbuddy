@@ -1,0 +1,161 @@
+/* ===============================================================
+   FITBUDDY LANDING PAGE STYLES
+   =============================================================== */
+
+.hero {
+  padding: 5rem 0 4rem;
+  text-align: center;
+}
+
+.hero-inner {
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  letter-spacing: -0.03em;
+  margin: 1.25rem 0;
+  line-height: 1.15;
+}
+
+.hero-title span {
+  color: var(--primary);
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 2.25rem;
+  max-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 3.5rem;
+}
+
+/* Realistic Product UI Hero Showcase */
+.hero-mockup-wrapper {
+  max-width: 1060px;
+  margin: 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: 1.5rem;
+  text-align: left;
+}
+
+.mockup-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+
+.mockup-grid {
+  display: grid;
+  grid-template-columns: 2.2fr 1fr;
+  gap: 1.5rem;
+}
+
+.mockup-days-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.mockup-day-pill {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.4rem;
+  text-align: center;
+  font-size: 0.75rem;
+}
+
+.mockup-day-pill.active {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  font-weight: 700;
+  color: var(--primary-dark);
+}
+
+/* Landing Section Highlights */
+.section {
+  padding: 5rem 0;
+}
+
+.section-alt {
+  background: var(--surface-alt);
+}
+
+.section-header {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 3.5rem;
+}
+
+.section-header h2 {
+  font-size: 2.25rem;
+  margin: 0.75rem 0;
+}
+
+.features-3col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.feature-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.feature-icon-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-md);
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.cta-banner {
+  background: var(--text-primary);
+  color: #ffffff;
+  border-radius: var(--radius-xl);
+  padding: 4rem 2rem;
+  text-align: center;
+  margin: 4rem 0;
+}
+
+.cta-banner h2 {
+  color: #ffffff;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.cta-banner p {
+  color: #cbd5e1;
+  max-width: 580px;
+  margin: 0 auto 2rem;
+  font-size: 1.1rem;
+}

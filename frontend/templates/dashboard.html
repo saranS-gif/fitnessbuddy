@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Workout Dashboard | FitBuddy AI</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <a href="/" class="brand">
+      ⚡ FitBuddy
+      <span class="brand-badge">DASHBOARD</span>
+    </a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="/dashboard" style="color:var(--primary-light);">My Plan</a></li>
+        <li><a href="/feedback">Improve Plan</a></li>
+        <li><a href="/history">History</a></li>
+        <li><a href="/onboarding" class="nav-btn">+ New Plan</a></li>
+        <li id="nav-auth-container"></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+
+    <!-- User Header & Summary -->
+    <div class="card" style="margin-bottom: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h1 id="user-greeting" style="font-size: 1.85rem; font-weight: 800; color: var(--navy); margin-bottom: 0.5rem;">
+            Welcome to Your AI Fitness Regimen 👋
+          </h1>
+          <div id="user-badges" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+          <a href="/feedback" class="btn btn-outline">⚡ Improve Plan</a>
+          <a href="/history" class="btn btn-secondary">📜 Revisions</a>
+        </div>
+      </div>
+
+      <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+        <p id="plan-summary" style="font-weight: 600; color: var(--navy-light); font-size: 1.05rem; margin-bottom: 0.25rem;"></p>
+        <p id="plan-weekly-goal" style="color: var(--primary-dark); font-weight: 700; font-size: 0.95rem;"></p>
+      </div>
+    </div>
+
+    <!-- 7-Day Workout Split Grid -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 0.5rem;">
+      <div>
+        <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--navy);">Your 7-Day Workout Plan</h2>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+          Execute scheduled movements, track rest periods, and log completed sessions.
+        </p>
+      </div>
+    </div>
+
+    <div id="workout-week-container" class="workout-week-grid">
+      <!-- 7 Day Cards rendered dynamically by workout.js -->
+      <div class="card loading-box" style="grid-column: 1 / -1;">
+        <div class="spinner"></div>
+        <p>Loading your 7-day routine...</p>
+      </div>
+    </div>
+
+    <!-- Nutrition Guidance Section -->
+    <section id="nutrition-section" class="nutrition-card" style="display: none;">
+      <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.5rem;">
+        <span style="font-size: 1.5rem;">🥗</span>
+        <h3 style="font-size: 1.4rem; font-weight: 800; color: var(--navy);">Daily Nutrition & Recovery Guidance</h3>
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">
+        Science-backed nutritional targets calibrated to your fitness goal and body composition.
+      </p>
+
+      <div class="nutrition-grid">
+        <div class="nutrition-item">
+          <h4>🔥 Calories Guidance</h4>
+          <p id="nut-calories">-</p>
+        </div>
+        <div class="nutrition-item">
+          <h4>🥩 Protein Target</h4>
+          <p id="nut-protein">-</p>
+        </div>
+        <div class="nutrition-item">
+          <h4>💧 Daily Hydration</h4>
+          <p id="nut-hydration">-</p>
+        </div>
+        <div class="nutrition-item">
+          <h4>🌿 Meal & Timing Strategy</h4>
+          <p id="nut-tip">-</p>
+        </div>
+      </div>
+
+      <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #a7f3d0;">
+        <p id="plan-disclaimer" style="font-size: 0.8rem; color: #047857; font-style: italic;">
+          General wellness guidance only. Consult a qualified professional for medical concerns.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 FitBuddy — AI Personal Fitness Companion. Built with FastAPI & Google Gemini AI.</p>
+  </footer>
+
+  {% include "auth_modal.html" %}
+  <script src="/static/js/app.js"></script>
+  <script src="/static/js/workout.js"></script>
+</body>
+</html>

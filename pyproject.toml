@@ -5,5 +5,9 @@ description = "FitBuddy - AI Personal Fitness Plan Generator"
 readme = "README.md"
 requires-python = ">=3.10"
 
+[tool.pytest.ini_options]
+pythonpath = ["backend", "."]
+testpaths = ["tests"]
+
 [tool.vercel]
-entrypoint = "app.main:app"
+entrypoint = "main:app"

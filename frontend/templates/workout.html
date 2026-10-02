@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workout Session | FitBuddy AI</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <header class="navbar">
+    <a href="/" class="brand">⚡ FitBuddy <span class="brand-badge">SESSION</span></a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="/dashboard">Back to Dashboard</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container-sm">
+    <div style="margin-bottom: 1.5rem;">
+      <a href="/dashboard" style="color:var(--text-muted); font-size:0.9rem; font-weight:600;">← Back to 7-Day Plan</a>
+    </div>
+
+    <div class="card" id="session-card">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+        <div>
+          <span class="day-badge workout" id="session-badge">Active Session</span>
+          <h1 id="session-day-title" style="font-size: 1.75rem; font-weight: 800; color: var(--navy); margin-top: 0.5rem;">
+            Today's Training Focus
+          </h1>
+          <p id="session-focus" style="color: var(--text-muted); font-size: 1rem;"></p>
+        </div>
+      </div>
+
+      <div id="session-exercises">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 FitBuddy — AI Personal Fitness Companion.</p>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const planStr = localStorage.getItem("fitbuddy_plan");
+      if (!planStr) {
+        window.location.href = "/dashboard";
+        return;
+      }
+      try {
+        const plan = JSON.parse(planStr);
+        const dayIdx = new Date().getDay(); // 0 Sunday, 1 Monday...
+        const daysOrder = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const todayName = daysOrder[dayIdx];
+
+        const todayWorkout = (plan.days || []).find(d => d.day.toLowerCase() === todayName.toLowerCase()) || plan.days[0];
+        if (todayWorkout) {
+          document.getElementById("session-day-title").textContent = `${todayWorkout.day} Workout`;
+          document.getElementById("session-focus").textContent = todayWorkout.focus;
+          document.getElementById("session-badge").textContent = todayWorkout.type;
+          document.getElementById("session-badge").className = `day-badge ${todayWorkout.type === 'Rest' ? 'rest' : 'workout'}`;
+
+          const exContainer = document.getElementById("session-exercises");
+          let html = "";
+          (todayWorkout.exercises || []).forEach((ex, idx) => {
+            html += `
+              <div class="exercise-item" style="padding:1.25rem; margin-bottom:1rem;">
+                <div style="font-size:0.75rem; font-weight:700; color:var(--primary-dark); text-transform:uppercase;">EXERCISE 0${idx + 1}</div>
+                <h3 style="font-size:1.15rem; color:var(--navy); margin:0.25rem 0;">${ex.name}</h3>
+                <div class="exercise-meta" style="font-size:0.95rem; margin-bottom:0.5rem;">
+                  <span><strong>Sets:</strong> ${ex.sets}</span>
+                  <span><strong>Reps:</strong> ${ex.reps}</span>
+                  <span><strong>Rest:</strong> ${ex.rest_seconds}s</span>
+                </div>
+                ${ex.instructions ? `<p style="font-size:0.85rem; color:var(--text-muted);">${ex.instructions}</p>` : ''}
+              </div>
+            `;
+          });
+          exContainer.innerHTML = html || "<p style='color:var(--text-muted);'>No exercises scheduled. Active recovery day!</p>";
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    });
+  </script>
+</body>
+</html>

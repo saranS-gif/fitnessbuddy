@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | FitBuddy</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <a href="/" class="brand">
+      ⚡ FitBuddy
+      <span class="brand-badge" style="background:#e11d48;">ADMIN</span>
+    </a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/dashboard">Dashboard</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div style="margin-bottom: 2rem;">
+      <h1 style="font-size: 2rem; font-weight: 800; color: var(--navy);">
+        FitBuddy Administration
+      </h1>
+      <p style="color: var(--text-muted); font-size: 1rem;">
+        Monitor registered users and generated workout programs.
+      </p>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="grid-2" style="margin-bottom: 2rem;">
+      <div class="card" style="display:flex; align-items:center; gap:1.25rem;">
+        <div style="background:#ecfdf5; color:var(--primary-dark); width:54px; height:54px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.75rem;">
+          👥
+        </div>
+        <div>
+          <div style="font-size:2rem; font-weight:800; color:var(--navy); line-height:1;">{{ total_users }}</div>
+          <div style="color:var(--text-muted); font-size:0.9rem; font-weight:600; margin-top:0.25rem;">Registered Users</div>
+        </div>
+      </div>
+
+      <div class="card" style="display:flex; align-items:center; gap:1.25rem;">
+        <div style="background:#eff6ff; color:#2563eb; width:54px; height:54px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.75rem;">
+          ⚡
+        </div>
+        <div>
+          <div style="font-size:2rem; font-weight:800; color:var(--navy); line-height:1;">{{ total_plans }}</div>
+          <div style="color:var(--text-muted); font-size:0.9rem; font-weight:600; margin-top:0.25rem;">Plans Generated</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="card" style="padding:0; overflow:hidden;">
+      <div style="padding:1.25rem 1.5rem; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="color:var(--navy); font-size:1.2rem;">All User Profiles</h3>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; text-align:left; font-size:0.95rem;">
+          <thead>
+            <tr style="background:#f8fafc; border-bottom:1px solid var(--border); color:var(--navy-muted);">
+              <th style="padding:0.85rem 1.25rem;">ID</th>
+              <th style="padding:0.85rem 1.25rem;">Name</th>
+              <th style="padding:0.85rem 1.25rem;">Biometrics</th>
+              <th style="padding:0.85rem 1.25rem;">Goal</th>
+              <th style="padding:0.85rem 1.25rem;">Intensity</th>
+              <th style="padding:0.85rem 1.25rem;">Location</th>
+              <th style="padding:0.85rem 1.25rem; text-align:right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:0.85rem 1.25rem; font-weight:700; color:var(--text-muted);">#{{ user.id }}</td>
+              <td style="padding:0.85rem 1.25rem; font-weight:600; color:var(--navy);">{{ user.name }}</td>
+              <td style="padding:0.85rem 1.25rem; color:var(--text-muted);">{{ user.age }} yrs • {{ user.weight }} kg • {{ user.height }} cm</td>
+              <td style="padding:0.85rem 1.25rem;"><span class="day-badge workout">{{ user.goal }}</span></td>
+              <td style="padding:0.85rem 1.25rem;">{{ user.intensity }}</td>
+              <td style="padding:0.85rem 1.25rem;">{{ user.location }}</td>
+              <td style="padding:0.85rem 1.25rem; text-align:right;">
+                <form method="POST" action="/admin/delete/{{ user.id }}" onsubmit="return confirm('Delete user #{{ user.id }} and all associated plans?');" style="display:inline;">
+                  <button type="submit" class="btn btn-secondary btn-sm" style="color:#dc2626; border-color:#fecaca;">Delete</button>
+                </form>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="7" style="padding:2.5rem; text-align:center; color:var(--text-muted);">
+                No users found. Register a user through onboarding!
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 FitBuddy — AI Personal Fitness Companion.</p>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
