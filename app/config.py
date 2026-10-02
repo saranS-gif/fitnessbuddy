@@ -28,6 +28,12 @@ class Settings(BaseSettings):
         extra="ignore"
     )
 
+    def model_post_init(self, __context: object) -> None:
+        # On Vercel serverless functions, the root filesystem is read-only.
+        # Use /tmp for SQLite database storage if running on Vercel.
+        if os.environ.get("VERCEL") and self.DATABASE_URL.startswith("sqlite:///."):
+            self.DATABASE_URL = "sqlite:////tmp/fitbuddy.db"
+
 
 @lru_cache()
 def get_settings() -> Settings:

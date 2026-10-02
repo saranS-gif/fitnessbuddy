@@ -19,11 +19,14 @@ class UserOut(BaseModel):
     name: str
     age: int
     weight: float
+    height: Optional[float] = 170.0
     goal: str
     intensity: str
     experience: str
-    workout_location: str
+    location: Optional[str] = "Home"
+    equipment: Optional[str] = "None"
+    workout_location: Optional[str] = "Home"
     preferred_days: List[str]
-    created_at: datetime
+    created_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)

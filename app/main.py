@@ -36,20 +36,23 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-static_dir = os.path.join(BASE_DIR, "static")
-os.makedirs(static_dir, exist_ok=True)
-app.mount("/static", StaticFiles(directory=static_dir), name="static")
+from pathlib import Path
 
-templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
+BASE_DIR = Path(__file__).resolve().parent
+TEMPLATES_DIR = BASE_DIR / "templates"
+STATIC_DIR = BASE_DIR / "static"
+STATIC_DIR.mkdir(parents=True, exist_ok=True)
+
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 
 @app.middleware("http")
 async def ensure_localhost_middleware(request: Request, call_next):
-    # Firebase Auth requires 'localhost' rather than '127.0.0.1' by default.
-    # Automatically redirect any 127.0.0.1 requests to localhost.
+    # Firebase Auth requires 'localhost' rather than '127.0.0.1' by default when testing locally.
+    # Automatically redirect any 127.0.0.1 requests to localhost in local dev.
     host = request.headers.get("host", "")
-    if host.startswith("127.0.0.1"):
+    if host.startswith("127.0.0.1") and not os.environ.get("VERCEL"):
         new_url = str(request.url).replace("127.0.0.1", "localhost", 1)
         return RedirectResponse(url=new_url, status_code=307)
     return await call_next(request)
@@ -244,35 +247,9 @@ def api_mark_complete(plan_id: int, req: MarkCompleteRequest, db: Session = Depe
     }
 
 
-@app.get("/api/users/{user_id}")
-def api_get_user(user_id: int, db: Session = Depends(get_db)):
-    """Fetches user profile information."""
-    user = WorkoutService.get_user(db, user_id)
-    if not user:
-        return JSONResponse(
-            status_code=status.HTTP_404_NOT_FOUND,
-            content={"success": False, "message": "User not found"}
-        )
-
-    pref_days = []
-    try:
-        pref_days = json.loads(user.preferred_days) if user.preferred_days else []
-    except Exception:
-        pref_days = []
-
-    return {
-        "id": user.id,
-        "name": user.name,
-        "age": user.age,
-        "weight": user.weight,
-        "height": user.height,
-        "goal": user.goal,
-        "intensity": user.intensity,
-        "experience": user.experience,
-        "location": user.location,
-        "equipment": user.equipment,
-        "preferred_days": pref_days
-    }
+# Register API routers
+from app.routes.user_routes import router as user_router
+app.include_router(user_router)
 
 
 @app.post("/admin/delete/{user_id}")

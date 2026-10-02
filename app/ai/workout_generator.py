@@ -235,3 +235,33 @@ def generate_fallback_plan(user_profile: Dict[str, Any]) -> Dict[str, Any]:
         "disclaimer": "General wellness guidance only. Consult a qualified professional for medical concerns.",
         "is_fallback": True
     }
+
+
+def generate_workout_plan_ai(user_profile: Dict[str, Any]):
+    """Generates a WeeklyWorkoutPlan model for user profile."""
+    from app.schemas.workout import WeeklyWorkoutPlan, DailyWorkoutSchema, ExerciseSchema
+    raw = generate_fallback_plan(user_profile)
+    week = []
+    for d in raw.get("days", []):
+        exercises = [
+            ExerciseSchema(
+                name=ex.get("name", "Exercise"),
+                sets=int(ex.get("sets", 3)),
+                reps=str(ex.get("reps", "10-12")),
+                rest_seconds=int(ex.get("rest_seconds", 60)),
+                notes=ex.get("instructions")
+            )
+            for ex in d.get("exercises", [])
+        ]
+        week.append(
+            DailyWorkoutSchema(
+                day=d.get("day", ""),
+                title=d.get("focus", "Workout Day"),
+                warmup=d.get("warmup", ["5 minutes dynamic stretches"]),
+                exercises=exercises,
+                cooldown=d.get("cooldown", ["5 minutes static stretching"]),
+                recovery=d.get("recovery", "Rest and hydrate."),
+                is_rest_day=bool(d.get("is_rest_day", len(exercises) == 0))
+            )
+        )
+    return WeeklyWorkoutPlan(week=week)
