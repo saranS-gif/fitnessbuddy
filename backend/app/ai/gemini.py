@@ -9,10 +9,6 @@ logger = logging.getLogger("fitbuddy")
 
 
 def get_gemini_model() -> Optional[Any]:
-    """
-    Initializes and returns a Gemini GenerativeModel instance.
-    Only checks that the key exists and is non-empty. Does NOT check for 'AIza' prefix.
-    """
     api_key = (settings.GEMINI_API_KEY or "").strip()
     if not api_key or api_key in ("", "your_api_key_here", "your_gemini_api_key_here"):
         print("[FitBuddy] Gemini API key not configured. Running FitBuddy in fallback mode.")
@@ -30,11 +26,9 @@ def get_gemini_model() -> Optional[Any]:
 
 
 def _clean_and_parse_json(text: str) -> Optional[Dict[str, Any]]:
-    """Safely extracts and parses JSON from raw model output."""
     if not text:
         return None
     cleaned = text.strip()
-    # Remove markdown codeblocks
     cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned, flags=re.IGNORECASE)
     cleaned = re.sub(r"\s*```$", "", cleaned)
     cleaned = cleaned.strip()
@@ -42,7 +36,6 @@ def _clean_and_parse_json(text: str) -> Optional[Dict[str, Any]]:
     try:
         return json.loads(cleaned)
     except Exception:
-        # Fallback regex search for outer {...}
         match = re.search(r"(\{.*\})", cleaned, re.DOTALL)
         if match:
             try:
@@ -53,10 +46,6 @@ def _clean_and_parse_json(text: str) -> Optional[Dict[str, Any]]:
 
 
 def generate_workout_plan(user_profile: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Generates a personalized 7-day fitness regimen using Gemini AI,
-    or falls back to the safe rule-based generator if Gemini is unavailable.
-    """
     print("[FitBuddy] Workout generation started")
     model = get_gemini_model()
 
@@ -136,7 +125,6 @@ MANDATORY RULES:
         except Exception as e:
             print(f"[FitBuddy] Gemini call failed ({e}). Employing fallback engine.")
 
-    # Safe fallback execution
     plan = generate_fallback_plan(user_profile)
     return plan
 
@@ -146,10 +134,6 @@ def generate_updated_plan(
     original_plan: Dict[str, Any],
     feedback_text: str
 ) -> Dict[str, Any]:
-    """
-    Submits user feedback along with original plan to Gemini AI to generate an updated version.
-    The original plan remains untouched.
-    """
     print("[FitBuddy] Feedback update generation started")
     model = get_gemini_model()
 
@@ -174,11 +158,6 @@ USER FEEDBACK:
 
 TASK:
 Produce an UPDATED 7-day plan that directly incorporates the user's feedback.
-- If requested "more cardio", add conditioning / aerobic blocks.
-- If requested "easier" or "less intensity", reduce volume/sets and increase rest.
-- If requested "more rest", convert taxing days into Active Recovery.
-- If requested "focus on legs", increase lower-body compound work.
-- If requested "shorter workouts", streamline movements and reduce rest intervals.
 - Maintain the exact same JSON schema with 7 days (Monday through Sunday), summary, weekly_goal, nutrition, disclaimer.
 - Output ONLY pure JSON.
 """
@@ -195,7 +174,6 @@ Produce an UPDATED 7-day plan that directly incorporates the user's feedback.
         except Exception as e:
             print(f"[FitBuddy] Gemini update failed ({e}). Applying safe rule adjustments.")
 
-    # Graceful fallback modification: apply rules to original plan
     import copy
     updated = copy.deepcopy(original_plan)
     fb_lower = feedback_text.lower()

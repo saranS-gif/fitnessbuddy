@@ -12,8 +12,14 @@ from app.dependencies import get_current_admin
 from app.models.admin import Admin
 from typing import Optional
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
+from pathlib import Path
+
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+_TEMPLATES_DIR = _PROJECT_ROOT / "templates"
+if not _TEMPLATES_DIR.exists():
+    _TEMPLATES_DIR = Path(__file__).resolve().parent.parent / "templates"
+
+templates = Jinja2Templates(directory=str(_TEMPLATES_DIR))
 
 router = APIRouter(include_in_schema=False)
 

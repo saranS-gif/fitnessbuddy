@@ -1,0 +1,14 @@
+{
+  "name": "fitbuddy-frontend",
+  "version": "2.0.0",
+  "description": "FitBuddy Frontend Client",
+  "private": true,
+  "scripts": {
+    "dev": "npx serve . -p 3000",
+    "start": "npx serve . -p 3000",
+    "build": "echo 'Frontend ready for Vercel deployment'"
+  },
+  "keywords": ["fitness", "frontend"],
+  "author": "FitBuddy",
+  "license": "MIT"
+}

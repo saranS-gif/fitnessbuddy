@@ -1,1 +1,0 @@
-"""FitBuddy Backend Package."""

@@ -14,11 +14,6 @@ def update_plan_with_feedback_ai(
     original_plan_dict: Dict[str, Any],
     feedback_text: str
 ) -> WeeklyWorkoutPlan:
-    """
-    Synthesize user profile, the existing workout plan, and specific user feedback
-    through Gemini AI to generate an updated 7-day workout plan.
-    The original plan structure remains intact; an updated plan is returned.
-    """
     model = get_gemini_client()
     clean_feedback = feedback_text.strip()
 
@@ -42,37 +37,9 @@ CURRENT WORKOUT PLAN (JSON):
 
 TASK:
 Generate an UPDATED 7-day workout plan that directly addresses the user's feedback.
-- If the user asked for "more cardio", integrate cardio sessions, intervals, or conditioning blocks.
-- If the user asked to "make workouts easier" or "reduce intensity", reduce working sets, increase rest periods, or swap in lighter variations.
-- If the user requested "another rest day", convert the most taxing workout day into an Active Recovery / Rest day.
-- If the user asked for "home workouts", convert gym movements to bodyweight/minimal equipment movements.
-- If the user requested "reduce leg exercises", replace strenuous lower-body compound lifts with upper-body, core, or low-impact mobility.
-- If the user asked for "make workouts shorter", streamline exercise count and superset/reduce rest.
 
 MANDATORY RULES:
-1. Output MUST be strictly valid JSON matching the exact WeeklyWorkoutPlan schema:
-{{
-  "week": [
-    {{
-      "day": "Monday",
-      "title": "Updated Title",
-      "warmup": ["Warm-up step"],
-      "exercises": [
-        {{
-          "name": "Exercise Name",
-          "sets": 3,
-          "reps": "10-12",
-          "duration_minutes": null,
-          "rest_seconds": 60,
-          "notes": "Execution note reflecting feedback"
-        }}
-      ],
-      "cooldown": ["Cooldown step"],
-      "recovery": "Recovery tip",
-      "is_rest_day": false
-    }}
-  ]
-}}
+1. Output MUST be strictly valid JSON matching the exact WeeklyWorkoutPlan schema.
 2. Output EXACTLY 7 items in the "week" array covering Monday through Sunday.
 3. Return pure raw JSON without markdown formatting.
 """
@@ -93,7 +60,6 @@ MANDATORY RULES:
         except Exception as e:
             logger.error(f"Gemini plan update failed ({e}). Applying intelligent heuristic adaptation.")
 
-    # Rule-based adaptation engine
     return _apply_heuristic_feedback_update(original_plan_dict, clean_feedback)
 
 
@@ -101,7 +67,6 @@ def _apply_heuristic_feedback_update(
     original_plan_dict: Dict[str, Any],
     feedback: str
 ) -> WeeklyWorkoutPlan:
-    """Adapts an existing plan based on feedback keywords if AI is offline."""
     updated = copy.deepcopy(original_plan_dict)
     week_days = updated.get("week", [])
     fb_lower = feedback.lower()
@@ -109,7 +74,6 @@ def _apply_heuristic_feedback_update(
     for idx, day in enumerate(week_days):
         exercises = day.get("exercises", [])
 
-        # 1. More cardio
         if "cardio" in fb_lower:
             if not day.get("is_rest_day"):
                 exercises.append({
@@ -120,18 +84,14 @@ def _apply_heuristic_feedback_update(
                     "rest_seconds": 30,
                     "notes": "Added per feedback: Elevate aerobic conditioning"
                 })
-
-        # 2. Make easier / reduce intensity
         elif "easier" in fb_lower or "less intense" in fb_lower or "reduce intensity" in fb_lower:
             for ex in exercises:
                 if ex.get("sets", 3) > 2:
                     ex["sets"] -= 1
                 ex["rest_seconds"] = ex.get("rest_seconds", 60) + 30
                 ex["notes"] = (ex.get("notes") or "") + " (Adjusted for recovery: reduced volume)"
-
-        # 3. Another rest day
         elif "rest" in fb_lower or "rest day" in fb_lower:
-            if idx == 3 and not day.get("is_rest_day"):  # Convert Thursday / Day 4
+            if idx == 3 and not day.get("is_rest_day"):
                 day["title"] = "Additional Active Recovery (Per Feedback)"
                 day["is_rest_day"] = True
                 day["exercises"] = [{
@@ -142,19 +102,15 @@ def _apply_heuristic_feedback_update(
                     "rest_seconds": 0,
                     "notes": "Dedicated passive restoration day added"
                 }]
-
-        # 4. Home workouts
         elif "home" in fb_lower:
             for ex in exercises:
                 name = ex.get("name", "")
                 if "barbell" in name.lower() or "cable" in name.lower() or "machine" in name.lower():
                     ex["name"] = name.replace("Barbell", "Bodyweight / Banded").replace("Cable", "Towel / Resistance Band")
                     ex["notes"] = (ex.get("notes") or "") + " [Adapted for Home Setup]"
-
-        # 5. Reduce legs
         elif "leg" in fb_lower or "legs" in fb_lower:
             day["exercises"] = [
-                ex for ex in exercises if not any(leg_word in ex.get("name", "").lower() for leg_word in ["squat", "deadlift", "lunge", "calf", "leg"] )
+                ex for ex in exercises if not any(leg_word in ex.get("name", "").lower() for leg_word in ["squat", "deadlift", "lunge", "calf", "leg"])
             ]
             if len(day["exercises"]) == 0 and not day.get("is_rest_day"):
                 day["exercises"] = [{
@@ -165,8 +121,6 @@ def _apply_heuristic_feedback_update(
                     "rest_seconds": 45,
                     "notes": "Low-impact core stability substitution"
                 }]
-
-        # 6. Shorter sessions
         elif "shorter" in fb_lower or "quick" in fb_lower:
             if len(exercises) > 3:
                 day["exercises"] = exercises[:3]

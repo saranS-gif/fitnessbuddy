@@ -108,15 +108,12 @@ function updateAuthUI(user) {
   }
 }
 
-// Auto-switch from 127.0.0.1 to localhost for Firebase Auth compatibility
-if (window.location.hostname === "127.0.0.1") {
-  window.location.hostname = "localhost";
-}
 
 function formatAuthError(error) {
   if (!error) return "Authentication failed";
   if (error.code === "auth/unauthorized-domain") {
-    return "Please access the app at http://localhost:8000 for Firebase Auth.";
+    return "This website is not authorized for Firebase Authentication. Please add this domain in Firebase Console.";
+  
   }
   if (error.code === "auth/operation-not-allowed") {
     return "Please enable this sign-in provider in Firebase Console under Authentication > Sign-in method.";
@@ -133,16 +130,32 @@ function formatAuthError(error) {
   return error.message || "Authentication failed";
 }
 
+let isAuthInProgress = false;
+
 // Authentication Actions
 export async function signInGoogle() {
+  if (isAuthInProgress) {
+    return;
+  }
+  isAuthInProgress = true;
+  const btnGoogle = document.getElementById("btn-google-login");
+  if (btnGoogle) btnGoogle.disabled = true;
+
   try {
     const result = await signInWithPopup(auth, googleProvider);
     closeAuthModal();
     if (window.showToast) window.showToast(`Welcome back, ${result.user.displayName || 'Athlete'}!`, "success");
     return result.user;
   } catch (error) {
+    if (error.code === "auth/cancelled-popup-request" || error.code === "auth/popup-closed-by-user") {
+      console.log("[FitBuddy Firebase] Popup closed or cancelled:", error.code);
+      return null;
+    }
     if (window.showToast) window.showToast(formatAuthError(error), "error");
     throw error;
+  } finally {
+    isAuthInProgress = false;
+    if (btnGoogle) btnGoogle.disabled = false;
   }
 }
 

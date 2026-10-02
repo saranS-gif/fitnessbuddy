@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitBuddy — Your Personal AI Fitness Coach</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <a href="/" class="brand">
+      ⚡ FitBuddy
+      <span class="brand-badge">AI COACH</span>
+    </a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#nutrition">Nutrition</a></li>
+        <li><a href="/dashboard">Dashboard</a></li>
+        <li><a href="/onboarding" class="nav-btn">Create My Plan</a></li>
+        <li id="nav-auth-container"></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-tag">⚡ Powered by Google Gemini AI</div>
+    <h1>Your Personal <span>AI Fitness Coach</span></h1>
+    <p>
+      Generate a personalized 7-day workout plan based on your goals, fitness level, available equipment, and schedule.
+    </p>
+    <div class="hero-actions">
+      <a href="/onboarding" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">
+        Create My Plan →
+      </a>
+      <a href="#how-it-works" class="btn btn-secondary" style="padding: 1rem 2rem; font-size: 1.1rem;">
+        Learn How It Works
+      </a>
+    </div>
+  </section>
+
+  <!-- Value Proposition / Tagline Strip -->
+  <div style="background: #ffffff; border-bottom: 1px solid var(--border); padding: 1.5rem 1rem; text-align: center;">
+    <h3 style="color: var(--navy); font-weight: 700; letter-spacing: -0.01em;">
+      "Your Workout. Designed Around You."
+    </h3>
+  </div>
+
+  <!-- How It Works Section -->
+  <section id="how-it-works" class="container">
+    <div class="section-head">
+      <h2>How It Works</h2>
+      <p>Three effortless steps to your customized science-backed fitness plan.</p>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <div style="font-size: 2.5rem; margin-bottom: 1rem;">📝</div>
+        <h3 style="margin-bottom: 0.5rem; color: var(--navy);">1. Share Your Profile</h3>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+          Tell FitBuddy your age, weight, height, primary goal, available equipment, and schedule.
+        </p>
+      </div>
+      <div class="card">
+        <div style="font-size: 2.5rem; margin-bottom: 1rem;">⚡</div>
+        <h3 style="margin-bottom: 0.5rem; color: var(--navy);">2. Gemini AI Designs</h3>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+          Google Gemini creates a structured 7-day routine tailored to your intensity, warm-up, and recovery.
+        </p>
+      </div>
+      <div class="card">
+        <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔄</div>
+        <h3 style="margin-bottom: 0.5rem; color: var(--navy);">3. Feedback & Evolve</h3>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+          Tell FitBuddy to "add more cardio" or "make it easier" anytime. Gemini updates your plan while saving your original baseline.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Features Grid -->
+  <section id="features" style="background: #ffffff; padding: 4rem 1.5rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+    <div class="container">
+      <div class="section-head">
+        <h2>Features Built for Real Results</h2>
+        <p>A complete training companion designed for longevity, progress, and safety.</p>
+      </div>
+      <div class="grid-3">
+        <div class="card" style="border: none; box-shadow: none; background: #f8fafc;">
+          <h4 style="color: var(--primary-dark); font-size: 1.1rem; margin-bottom: 0.4rem;">🎯 7-Day Precision Splits</h4>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">
+            Every single day is scheduled with distinct exercises, sets, rep targets, rest periods, and form instructions.
+          </p>
+        </div>
+        <div class="card" style="border: none; box-shadow: none; background: #f8fafc;">
+          <h4 style="color: var(--primary-dark); font-size: 1.1rem; margin-bottom: 0.4rem;">🏠 Location & Equipment Agnostic</h4>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">
+            Whether training at Home with Dumbbells or in a Full Gym, workouts calibrate directly to what you have.
+          </p>
+        </div>
+        <div class="card" style="border: none; box-shadow: none; background: #f8fafc;">
+          <h4 style="color: var(--primary-dark); font-size: 1.1rem; margin-bottom: 0.4rem;">🧘 Warm-Up & Cool-Down</h4>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">
+            Pre-workout dynamic mobility and post-workout static stretches are integrated into every workout.
+          </p>
+        </div>
+        <div class="card" style="border: none; box-shadow: none; background: #f8fafc;">
+          <h4 style="color: var(--primary-dark); font-size: 1.1rem; margin-bottom: 0.4rem;">🥗 Nutrition & Macro Guidelines</h4>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">
+            Targeted daily protein, hydration, and caloric targets calibrated to your goal.
+          </p>
+        </div>
+        <div class="card" style="border: none; box-shadow: none; background: #f8fafc;">
+          <h4 style="color: var(--primary-dark); font-size: 1.1rem; margin-bottom: 0.4rem;">🛡️ Safe Fallback Protection</h4>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">
+            If internet drops or AI quotas exhaust, FitBuddy's built-in rule engine generates safe routines reliably.
+          </p>
+        </div>
+        <div class="card" style="border: none; box-shadow: none; background: #f8fafc;">
+          <h4 style="color: var(--primary-dark); font-size: 1.1rem; margin-bottom: 0.4rem;">📜 Version History & Tracking</h4>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">
+            Preserves your initial baseline as Version 1 while saving Version 2, 3 as you provide feedback.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Nutrition & Recovery Section -->
+  <section id="nutrition" class="container">
+    <div class="card" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; padding: 3rem 2rem;">
+      <div style="max-width: 700px;">
+        <span class="brand-badge" style="background: var(--primary); margin-bottom: 1rem; display: inline-block;">NUTRITION & RECOVERY</span>
+        <h2 style="font-size: 2.2rem; margin-bottom: 1rem; color: #ffffff;">Calibrated Nutrition Alongside Every Plan</h2>
+        <p style="color: #cbd5e1; font-size: 1.05rem; margin-bottom: 2rem;">
+          Workouts tear down muscle; nutrition and sleep rebuild it. FitBuddy calculates personalized daily hydration, protein targets (g/kg), and recovery advice for each regimen.
+        </p>
+        <a href="/onboarding" class="btn btn-primary">Start My Personalized Plan →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2026 FitBuddy — AI Personal Fitness Companion. Built with FastAPI & Google Gemini AI.</p>
+    <p style="margin-top: 0.5rem; font-size: 0.8rem; color: #64748b;">
+      General wellness guidance only. Consult a qualified professional for medical or health-related concerns.
+    </p>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

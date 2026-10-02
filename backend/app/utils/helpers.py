@@ -5,7 +5,6 @@ def calculate_bmr(weight_kg: float, height_cm: float, age: int, gender: str) -> 
     """Calculate Basal Metabolic Rate using Mifflin-St Jeor equation."""
     if gender and gender.lower() == "female":
         return (10 * weight_kg) + (6.25 * height_cm) - (5 * age) - 161
-    # Default to male / general formula
     return (10 * weight_kg) + (6.25 * height_cm) - (5 * age) + 5
 
 
@@ -33,7 +32,7 @@ def calculate_macros(tdee: float, goal: str) -> Dict[str, int]:
     elif goal == "muscle_gain":
         target_calories = int(tdee * 1.15)
         protein_ratio, fat_ratio, carb_ratio = 0.30, 0.25, 0.45
-    else:  # Maintenance / Endurance
+    else:
         target_calories = int(tdee)
         protein_ratio, fat_ratio, carb_ratio = 0.25, 0.25, 0.50
 

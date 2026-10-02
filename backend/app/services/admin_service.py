@@ -17,10 +17,6 @@ class AdminService:
 
     @staticmethod
     def get_real_stats(db: Session) -> Dict[str, int]:
-        """
-        Calculates exact operational metrics directly from the database.
-        Never fabricates numbers.
-        """
         total_users = db.query(User).count()
         plans_generated = db.query(WorkoutPlan).count()
         plans_updated = db.query(WorkoutPlan).filter(WorkoutPlan.updated_plan.isnot(None)).count()

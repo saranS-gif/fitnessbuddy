@@ -32,10 +32,6 @@ class WeeklyWorkoutPlan(BaseModel):
     @field_validator("week")
     @classmethod
     def validate_seven_days(cls, v):
-        if len(v) != 7:
-            # If not 7 days, we handle padding or trimming in generator recovery,
-            # but schema should accommodate valid weeks
-            pass
         return v
 
     model_config = ConfigDict(from_attributes=True)

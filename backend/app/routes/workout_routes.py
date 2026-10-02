@@ -19,7 +19,6 @@ class GenerateRequest(BaseModel):
 
 
 def _format_plan_response(plan) -> Dict[str, Any]:
-    """Helper to convert stored JSON strings to proper schema dict for output."""
     try:
         original_dict = json.loads(plan.original_plan) if plan.original_plan else {}
     except Exception:
@@ -59,7 +58,6 @@ def _format_plan_response(plan) -> Dict[str, Any]:
 
 @router.post("/generate", status_code=status.HTTP_201_CREATED)
 def generate_workout(req: GenerateRequest, db: Session = Depends(get_db)):
-    """Generate 7-day personalized workout plan and nutrition guidance via Gemini AI."""
     user = UserService.get_by_id(db, req.user_id)
     if not user:
         raise HTTPException(
@@ -78,8 +76,7 @@ def generate_workout(req: GenerateRequest, db: Session = Depends(get_db)):
 
 @router.get("/{user_id}")
 def get_user_latest_plan(user_id: int, db: Session = Depends(get_db)):
-    """Retrieve the latest workout plan for a specific user."""
-    plan = WorkoutService.get_latest_user_plan(db, user_id)
+    plan = WorkoutService.get_latest_plan_for_user(db, user_id)
     if not plan:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -90,8 +87,7 @@ def get_user_latest_plan(user_id: int, db: Session = Depends(get_db)):
 
 @router.get("/plan/{plan_id}")
 def get_plan_by_id(plan_id: int, db: Session = Depends(get_db)):
-    """Retrieve a specific plan by its Plan ID."""
-    plan = WorkoutService.get_by_id(db, plan_id)
+    plan = WorkoutService.get_plan(db, plan_id)
     if not plan:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -106,12 +102,7 @@ def submit_plan_feedback(
     feedback_in: FeedbackCreate,
     db: Session = Depends(get_db)
 ):
-    """
-    Submits user feedback on a plan.
-    Triggers Gemini AI update.
-    The original plan is preserved intact, and an updated plan is created.
-    """
-    plan = WorkoutService.get_by_id(db, plan_id)
+    plan = WorkoutService.get_plan(db, plan_id)
     if not plan:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -136,8 +127,7 @@ def submit_plan_feedback(
 
 @router.get("/{plan_id}/history")
 def get_plan_history(plan_id: int, db: Session = Depends(get_db)):
-    """Retrieve complete revision timeline for this workout plan."""
-    plan = WorkoutService.get_by_id(db, plan_id)
+    plan = WorkoutService.get_plan(db, plan_id)
     if not plan:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -156,14 +146,13 @@ def complete_day(
     req: MarkCompleteRequest,
     db: Session = Depends(get_db)
 ):
-    """Mark a specific day as completed or uncompleted."""
-    plan = WorkoutService.get_by_id(db, plan_id)
+    plan = WorkoutService.get_plan(db, plan_id)
     if not plan:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Workout plan not found."
         )
-    completed_days = WorkoutService.set_day_completion(db, plan_id, req.day, req.completed)
+    completed_days = WorkoutService.toggle_day_completion(db, plan_id, req.day, req.completed)
     return {
         "plan_id": plan_id,
         "day": req.day,

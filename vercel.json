@@ -1,0 +1,50 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://fitnessbuddy-lhi3.onrender.com/api/:path*"
+    },
+    {
+      "source": "/health",
+      "destination": "https://fitnessbuddy-lhi3.onrender.com/health"
+    },
+    {
+      "source": "/static/:path*",
+      "destination": "/frontend/static/:path*"
+    },
+    {
+      "source": "/onboarding",
+      "destination": "/frontend/templates/onboarding.html"
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/frontend/templates/dashboard.html"
+    },
+    {
+      "source": "/workout",
+      "destination": "/frontend/templates/workout.html"
+    },
+    {
+      "source": "/feedback",
+      "destination": "/frontend/templates/feedback.html"
+    },
+    {
+      "source": "/history",
+      "destination": "/frontend/templates/history.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/frontend/templates/admin.html"
+    },
+    {
+      "source": "/loading",
+      "destination": "/frontend/templates/loading.html"
+    },
+    {
+      "source": "/",
+      "destination": "/frontend/templates/index.html"
+    }
+  ]
+}

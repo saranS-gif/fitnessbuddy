@@ -38,12 +38,14 @@ app = FastAPI(
 
 from pathlib import Path
 
-# Resolve frontend directories
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-TEMPLATES_DIR = PROJECT_ROOT / "frontend" / "templates"
-STATIC_DIR = PROJECT_ROOT / "frontend" / "static"
+# Resolve templates and static from project root
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+if not (PROJECT_ROOT / "templates").exists():
+    PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-# Fallback to local package directory if needed
+TEMPLATES_DIR = PROJECT_ROOT / "templates"
+STATIC_DIR = PROJECT_ROOT / "static"
+
 if not TEMPLATES_DIR.exists():
     TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
 if not STATIC_DIR.exists():
@@ -55,15 +57,16 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 
-@app.middleware("http")
-async def ensure_localhost_middleware(request: Request, call_next):
-    # Firebase Auth requires 'localhost' rather than '127.0.0.1' by default when testing locally.
-    # Automatically redirect any 127.0.0.1 requests to localhost in local dev.
-    host = request.headers.get("host", "")
-    if host.startswith("127.0.0.1") and not os.environ.get("VERCEL"):
-        new_url = str(request.url).replace("127.0.0.1", "localhost", 1)
-        return RedirectResponse(url=new_url, status_code=307)
-    return await call_next(request)
+from fastapi.middleware.cors import CORSMiddleware
+
+# Enable CORS for decoupled deployment
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # ==========================================

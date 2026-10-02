@@ -11,10 +11,6 @@ DISCLAIMER_TEXT = "General wellness guidance only. Consult a qualified professio
 
 
 def generate_nutrition_plan_ai(user_profile: Dict[str, Any]) -> NutritionGuidance:
-    """
-    Generate tailored nutrition and recovery recommendations based on user goals,
-    intensity, and physiological attributes.
-    """
     model = get_gemini_client()
     goal = user_profile.get("goal", "General Fitness")
     intensity = user_profile.get("intensity", "Medium")
@@ -57,7 +53,6 @@ Do NOT include markdown backticks or commentary outside JSON.
         except Exception as e:
             logger.error(f"Gemini nutrition generation failed ({e}). Using intelligent rule engine.")
 
-    # Rule-based fallback
     return _build_fallback_nutrition(goal, intensity, weight)
 
 

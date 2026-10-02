@@ -49,11 +49,6 @@ class WorkoutService:
 
     @staticmethod
     def generate_and_save_plan(db: Session, user: User) -> WorkoutPlan:
-        """
-        1. Formats user profile
-        2. Calls Gemini AI (or fallback)
-        3. Persists initial plan and Revision v1
-        """
         try:
             preferred_days = json.loads(user.preferred_days) if user.preferred_days else ["Monday", "Wednesday", "Friday"]
         except Exception:
@@ -117,10 +112,6 @@ class WorkoutService:
 
     @staticmethod
     def update_plan_with_feedback(db: Session, plan_id: int, feedback_text: str) -> WorkoutPlan:
-        """
-        Submits feedback to Gemini without overwriting original_plan.
-        Saves new revision (v2, v3, etc.) and updates plan.updated_plan.
-        """
         plan = db.query(WorkoutPlan).filter(WorkoutPlan.id == plan_id).first()
         if not plan:
             raise ValueError(f"Plan ID {plan_id} not found.")
@@ -144,21 +135,17 @@ class WorkoutService:
             "preferred_days": preferred_days
         }
 
-        # Current plan data (uses latest revision or original)
         base_plan_str = plan.updated_plan if plan.updated_plan else plan.original_plan
         try:
             base_plan_dict = json.loads(base_plan_str)
         except Exception:
             base_plan_dict = {}
 
-        # Call AI update
         updated_dict = generate_updated_plan(user_profile, base_plan_dict, feedback_text)
         updated_json_str = json.dumps(updated_dict)
 
-        # Update updated_plan on record (original_plan is NOT touched)
         plan.updated_plan = updated_json_str
 
-        # Save Revision
         current_revs = len(plan.revisions) if plan.revisions else 1
         new_version = current_revs + 1
 
@@ -170,7 +157,6 @@ class WorkoutService:
         )
         db.add(revision)
 
-        # Record feedback
         feedback_entry = Feedback(
             workout_plan_id=plan.id,
             user_id=user.id,

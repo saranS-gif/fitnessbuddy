@@ -7,11 +7,6 @@ DAYS_OF_WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturda
 
 
 def generate_fallback_plan(user_profile: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Intelligent, deterministic rule-based fallback generator.
-    Creates a complete 7-day workout plan and nutrition guidance adhering strictly to the schema.
-    Used when Gemini API key is missing, network is down, or Gemini fails.
-    """
     name = user_profile.get("name", "Athlete")
     goal = user_profile.get("goal", "General Fitness")
     intensity = user_profile.get("intensity", "Medium")
@@ -26,7 +21,6 @@ def generate_fallback_plan(user_profile: Dict[str, Any]) -> Dict[str, Any]:
     is_outdoor = location.lower() == "outdoor"
     is_gym = location.lower() == "gym" or "gym" in equipment.lower()
 
-    # Predefined safe, progressive workout splits
     split_templates = [
         {
             "focus": "Upper Body Strength & Posture",
@@ -162,7 +156,6 @@ def generate_fallback_plan(user_profile: Dict[str, Any]) -> Dict[str, Any]:
         }
     ]
 
-    # Build 7-day schedule
     days_list = []
     training_day_index = 0
 
@@ -206,7 +199,6 @@ def generate_fallback_plan(user_profile: Dict[str, Any]) -> Dict[str, Any]:
                 "recovery": "Prioritize high-quality sleep, nutrient-dense whole foods, and hydration."
             })
 
-    # Nutrition targets based on user biometric attributes
     is_muscle = "muscle" in goal.lower() or "strength" in goal.lower()
     is_loss = "loss" in goal.lower() or "weight" in goal.lower()
 
@@ -238,7 +230,6 @@ def generate_fallback_plan(user_profile: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def generate_workout_plan_ai(user_profile: Dict[str, Any]):
-    """Generates a WeeklyWorkoutPlan model for user profile."""
     from app.schemas.workout import WeeklyWorkoutPlan, DailyWorkoutSchema, ExerciseSchema
     raw = generate_fallback_plan(user_profile)
     week = []

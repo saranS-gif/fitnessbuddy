@@ -10,10 +10,8 @@ router = APIRouter(prefix="/api/users", tags=["Users"])
 
 @router.post("", response_model=UserOut, status_code=status.HTTP_201_CREATED)
 def create_user(user_in: UserCreate, db: Session = Depends(get_db)):
-    """Create a new user profile from onboarding."""
     try:
         user = UserService.create(db, user_in)
-        # Parse preferred_days for response model
         pref_days = json.loads(user.preferred_days) if user.preferred_days else []
         return UserOut(
             id=user.id,
@@ -39,7 +37,6 @@ def create_user(user_in: UserCreate, db: Session = Depends(get_db)):
 
 @router.get("/{user_id}", response_model=UserOut)
 def get_user_by_id(user_id: int, db: Session = Depends(get_db)):
-    """Retrieve user profile by ID."""
     user = UserService.get_by_id(db, user_id)
     if not user:
         raise HTTPException(

@@ -16,7 +16,7 @@ def create_feedback_standalone(
     feedback_in: FeedbackCreate,
     db: Session = Depends(get_db)
 ):
-    plan = WorkoutService.get_by_id(db, plan_id)
+    plan = WorkoutService.get_plan(db, plan_id)
     if not plan:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Workout plan not found")
     

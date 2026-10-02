@@ -11,14 +11,15 @@ from app.services.user_service import UserService
 from app.dependencies import get_current_admin
 from app.models.admin import Admin
 from typing import Optional
-
 from pathlib import Path
 
-# Resolve frontend templates directory
-_PROJECT_ROOT = Path(__file__).resolve().parents[3]
-_TEMPLATES_DIR = _PROJECT_ROOT / "frontend" / "templates"
+# Resolve templates directory relative to project root
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+_TEMPLATES_DIR = _PROJECT_ROOT / "templates"
 if not _TEMPLATES_DIR.exists():
-    _TEMPLATES_DIR = Path(__file__).resolve().parents[1] / "templates"
+    _TEMPLATES_DIR = Path(__file__).resolve().parent.parent.parent / "templates"
+if not _TEMPLATES_DIR.exists():
+    _TEMPLATES_DIR = Path(__file__).resolve().parent.parent / "templates"
 
 templates = Jinja2Templates(directory=str(_TEMPLATES_DIR))
 
