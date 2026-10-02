@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Your Plan | FitBuddy AI</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <a href="/" class="brand">
+      ⚡ FitBuddy
+      <span class="brand-badge">AI COACH</span>
+    </a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/dashboard">Dashboard</a></li>
+        <li id="nav-auth-container"></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container-sm">
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <span class="hero-tag" style="color:var(--primary-dark); background:var(--primary-bg); border-color:#a7f3d0;">STEP 1 OF 1</span>
+      <h1 style="font-size: 2.25rem; font-weight: 800; color: var(--navy); margin-top: 0.5rem;">
+        Tell Us About Yourself
+      </h1>
+      <p style="color: var(--text-muted); font-size: 1.05rem;">
+        Gemini AI will calibrate your 7-day program based on your exact biometrics and schedule.
+      </p>
+    </div>
+
+    <div class="card">
+      <form id="onboarding-form" onsubmit="handleGenerate(event)">
+
+        <!-- Biometrics -->
+        <div class="form-group">
+          <label class="form-label" for="name">Your Name</label>
+          <input type="text" id="name" class="form-control" placeholder="e.g. Saran" required autofocus>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="age">Age</label>
+            <input type="number" id="age" class="form-control" placeholder="25" min="12" max="100" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="weight">Weight (kg)</label>
+            <input type="number" id="weight" class="form-control" placeholder="70" step="0.5" min="20" max="300" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="height">Height (cm)</label>
+            <input type="number" id="height" class="form-control" placeholder="170" step="0.5" min="50" max="250" required>
+          </div>
+        </div>
+
+        <!-- Fitness Goal -->
+        <div class="form-group">
+          <label class="form-label">Primary Fitness Goal</label>
+          <div class="options-grid">
+            <div class="option-card" onclick="selectOption('goal', 'Weight Loss', this)">🔥 Weight Loss</div>
+            <div class="option-card" onclick="selectOption('goal', 'Muscle Gain', this)">💪 Muscle Gain</div>
+            <div class="option-card" onclick="selectOption('goal', 'General Fitness', this)">⚡ General Fitness</div>
+            <div class="option-card" onclick="selectOption('goal', 'Strength', this)">🏋️ Strength</div>
+            <div class="option-card" onclick="selectOption('goal', 'Flexibility', this)">🧘 Flexibility</div>
+            <div class="option-card" onclick="selectOption('goal', 'General Wellness', this)">🌿 General Wellness</div>
+          </div>
+        </div>
+
+        <!-- Workout Intensity -->
+        <div class="form-group">
+          <label class="form-label">Workout Intensity</label>
+          <div class="options-grid" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="option-card" onclick="selectOption('intensity', 'Low', this)">🌱 Low</div>
+            <div class="option-card" onclick="selectOption('intensity', 'Medium', this)">⚡ Medium</div>
+            <div class="option-card" onclick="selectOption('intensity', 'High', this)">🔥 High</div>
+          </div>
+        </div>
+
+        <!-- Experience Level -->
+        <div class="form-group">
+          <label class="form-label">Experience Level</label>
+          <div class="options-grid" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="option-card" onclick="selectOption('experience', 'Beginner', this)">🎯 Beginner (&lt; 1 yr)</div>
+            <div class="option-card" onclick="selectOption('experience', 'Intermediate', this)">🏆 Intermediate (1-3 yrs)</div>
+            <div class="option-card" onclick="selectOption('experience', 'Advanced', this)">🥇 Advanced (3+ yrs)</div>
+          </div>
+        </div>
+
+        <!-- Workout Location -->
+        <div class="form-group">
+          <label class="form-label">Workout Location</label>
+          <div class="options-grid" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="option-card" onclick="selectOption('location', 'Home', this)">🏠 Home</div>
+            <div class="option-card" onclick="selectOption('location', 'Gym', this)">🏋️ Gym</div>
+            <div class="option-card" onclick="selectOption('location', 'Outdoor', this)">🌲 Outdoor</div>
+          </div>
+        </div>
+
+        <!-- Available Equipment -->
+        <div class="form-group">
+          <label class="form-label">Available Equipment</label>
+          <div class="options-grid">
+            <div class="option-card" onclick="selectOption('equipment', 'None', this)">Bodyweight Only</div>
+            <div class="option-card" onclick="selectOption('equipment', 'Dumbbells', this)">Dumbbells</div>
+            <div class="option-card" onclick="selectOption('equipment', 'Resistance Bands', this)">Resistance Bands</div>
+            <div class="option-card" onclick="selectOption('equipment', 'Full Gym', this)">Full Gym</div>
+            <div class="option-card" onclick="selectOption('equipment', 'Custom', this)">Custom / Mixed</div>
+          </div>
+        </div>
+
+        <!-- Preferred Training Days (Multi-selection) -->
+        <div class="form-group">
+          <label class="form-label">Preferred Workout Days (Click to toggle)</label>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.6rem;">
+            Non-selected days will be scheduled as active recovery and mobility.
+          </p>
+          <div class="days-grid">
+            <div class="day-pill" data-day="Monday" onclick="toggleDay(this)">Mon</div>
+            <div class="day-pill" data-day="Tuesday" onclick="toggleDay(this)">Tue</div>
+            <div class="day-pill" data-day="Wednesday" onclick="toggleDay(this)">Wed</div>
+            <div class="day-pill" data-day="Thursday" onclick="toggleDay(this)">Thu</div>
+            <div class="day-pill" data-day="Friday" onclick="toggleDay(this)">Fri</div>
+            <div class="day-pill" data-day="Saturday" onclick="toggleDay(this)">Sat</div>
+            <div class="day-pill" data-day="Sunday" onclick="toggleDay(this)">Sun</div>
+          </div>
+        </div>
+
+        <!-- Status / Progress -->
+        <div id="generate-status" style="display: none; margin-bottom: 1rem; text-align: center; font-weight: 600; color: var(--primary-dark);">
+          AI is creating your personalized plan...
+        </div>
+
+        <button type="submit" id="btn-generate" class="btn btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem;">
+          Generate My AI Plan ⚡
+        </button>
+
+      </form>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 FitBuddy — AI Personal Fitness Companion.</p>
+  </footer>
+
+  {% include "auth_modal.html" %}
+  <script src="/static/js/app.js"></script>
+  <script src="/static/js/onboarding.js"></script>
+</body>
+</html>

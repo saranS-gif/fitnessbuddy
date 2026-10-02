@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Athlete Profile | FitBuddy AI{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/dashboard.css">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+  {% include "components/sidebar.html" %}
+
+  <main class="dash-content">
+    <div style="max-width: 680px;">
+      <a href="/dashboard" style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; color: var(--primary); font-size: 0.9rem; margin-bottom: 1.5rem;">
+        ← Back to Dashboard
+      </a>
+
+      <span class="badge badge-emerald">Athlete Profile</span>
+      <h1 style="font-size: 2rem; margin: 0.5rem 0 0.25rem;">Biometrics & Preferences</h1>
+      <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 2rem;">
+        These parameters directly guide Gemini when generating or adjusting your 7-day splits.
+      </p>
+
+      <div class="card" id="profile-card">
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;" id="profile-fields">
+          <!-- Populated by JS -->
+          <div class="skeleton skeleton-card" style="height: 140px;"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+{% include "components/bottom-nav.html" %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const userId = localStorage.getItem("fitbuddy_user_id");
+  const container = document.getElementById("profile-fields");
+  if (!userId) {
+    container.innerHTML = `<div class="empty-state">No profile found. Complete onboarding first.</div>`;
+    return;
+  }
+
+  try {
+    const user = await apiRequest(`/api/users/${userId}`);
+    container.innerHTML = `
+      <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
+        <span style="color: var(--text-muted); font-weight: 500;">Full Name</span>
+        <strong style="color: var(--text-primary);">${user.name}</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
+        <span style="color: var(--text-muted); font-weight: 500;">Age & Weight</span>
+        <strong style="color: var(--text-primary);">${user.age} yrs • ${user.weight} kg</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
+        <span style="color: var(--text-muted); font-weight: 500;">Primary Goal</span>
+        <strong style="color: var(--primary-dark);">${user.goal}</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
+        <span style="color: var(--text-muted); font-weight: 500;">Intensity Level</span>
+        <strong style="color: var(--text-primary);">${user.intensity}</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
+        <span style="color: var(--text-muted); font-weight: 500;">Experience</span>
+        <strong style="color: var(--text-primary);">${user.experience}</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
+        <span style="color: var(--text-muted); font-weight: 500;">Location</span>
+        <strong style="color: var(--text-primary);">${user.workout_location}</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: var(--text-muted); font-weight: 500;">Scheduled Days</span>
+        <strong style="color: var(--text-primary);">${(user.preferred_days || []).join(', ')}</strong>
+      </div>
+    `;
+  } catch (err) {
+    container.innerHTML = `<div class="error-card">Could not load profile.</div>`;
+  }
+});
+</script>
+{% endblock %}

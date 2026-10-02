@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}User Dossier | FitBuddy Admin{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/admin.css">
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px; padding: 3rem 1.5rem;" id="user-dossier-root">
+  <a href="/admin/dashboard" style="display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; color: var(--primary); font-size: 0.9rem; margin-bottom: 1.5rem;">
+    ← Back to Admin Console
+  </a>
+
+  <div style="margin-bottom: 2rem;">
+    <span class="badge badge-emerald">Athlete Profile Dossier</span>
+    <h1 style="font-size: 2.25rem; margin-top: 0.4rem;" id="dossier-name">Loading Athlete...</h1>
+    <p style="color: var(--text-secondary); font-size: 0.95rem;" id="dossier-meta">Retrieving database logs...</p>
+  </div>
+
+  <!-- Profile Attributes Grid -->
+  <div class="card" style="margin-bottom: 2rem;">
+    <h3 style="font-size: 1.2rem; margin-bottom: 1rem;">Profile Attributes</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;" id="dossier-profile-grid">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- Generated Plans & Revisions -->
+  <div class="card" style="margin-bottom: 2rem;">
+    <h3 style="font-size: 1.2rem; margin-bottom: 1rem;">Workout Plans & Revision Timeline</h3>
+    <div id="dossier-plans">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- User Feedback Logs -->
+  <div class="card">
+    <h3 style="font-size: 1.2rem; margin-bottom: 1rem;">Feedback Submissions</h3>
+    <div id="dossier-feedbacks">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/admin.js"></script>
+{% endblock %}

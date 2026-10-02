@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Improve My Plan | FitBuddy AI</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <a href="/" class="brand">
+      ⚡ FitBuddy
+      <span class="brand-badge">FEEDBACK</span>
+    </a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="/dashboard">Dashboard</a></li>
+        <li><a href="/history">History</a></li>
+        <li id="nav-auth-container"></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container-sm">
+    <div style="margin-bottom: 2rem; text-align: center;">
+      <span class="hero-tag" style="background:#fef3c7; color:#b45309; border-color:#fde68a;">ADAPTIVE FEEDBACK LOOP</span>
+      <h1 style="font-size: 2.25rem; font-weight: 800; color: var(--navy); margin-top: 0.5rem;">
+        Improve Your Plan
+      </h1>
+      <p style="color: var(--text-muted); font-size: 1.05rem;">
+        Tell Gemini AI how your workouts feel. Your original baseline is always preserved; an updated plan will be generated as a new version.
+      </p>
+    </div>
+
+    <div class="card">
+      <form onsubmit="submitFeedback(event)">
+
+        <div class="form-group">
+          <label class="form-label" for="feedback-input">What would you like to change?</label>
+          <textarea id="feedback-input" class="form-control" rows="4" 
+                    placeholder="e.g. Add more cardio sessions and lower the intensity on leg days..." required></textarea>
+        </div>
+
+        <!-- Quick Suggestion Chips -->
+        <div class="form-group">
+          <label class="form-label" style="font-size: 0.85rem; color: var(--text-muted);">Quick Suggestions (click to add):</label>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="insertFeedbackPrompt('Add more cardio')">🏃 Add more cardio</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="insertFeedbackPrompt('Make the workout easier')">🌱 Make workout easier</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="insertFeedbackPrompt('Give me more rest days')">🛌 More rest days</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="insertFeedbackPrompt('Focus more on legs')">🦵 Focus on legs</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="insertFeedbackPrompt('Reduce workout duration to 30 mins')">⏱️ Shorter duration</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="insertFeedbackPrompt('Switch to bodyweight home workouts only')">🏠 Home workout</button>
+          </div>
+        </div>
+
+        <div id="feedback-status" style="display: none; margin-bottom: 1rem; font-weight: 600; text-align: center;"></div>
+
+        <button type="submit" id="btn-submit-feedback" class="btn btn-primary" style="width: 100%; padding: 1rem; font-size: 1.05rem;">
+          Submit Feedback to Gemini ⚡
+        </button>
+
+      </form>
+    </div>
+
+    <!-- Assurance card -->
+    <div style="margin-top: 1.5rem; background:#ffffff; border:1px solid var(--border); border-radius:var(--radius-md); padding:1.25rem; display:flex; gap:1rem; align-items:center;">
+      <span style="font-size:1.75rem;">🛡️</span>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin:0;">
+        <strong>Safe & Immutable Revisions:</strong> Your initial baseline plan is permanently stored as <strong>Version 1</strong>. You can view or switch back to any earlier version at any time from the <a href="/history" style="color:var(--primary-dark); font-weight:600;">Plan History</a> tab.
+      </p>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 FitBuddy — AI Personal Fitness Companion.</p>
+  </footer>
+
+  {% include "auth_modal.html" %}
+  <script src="/static/js/app.js"></script>
+  <script src="/static/js/feedback.js"></script>
+</body>
+</html>

@@ -1,0 +1,226 @@
+/* ===============================================================
+   FITBUDDY DASHBOARD & WORKOUT STYLES
+   =============================================================== */
+
+.dashboard-container {
+  display: flex;
+  min-height: calc(100vh - 72px);
+}
+
+/* Desktop Left Sidebar */
+.dash-sidebar {
+  width: 280px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 2rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.dash-menu {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 1.5rem;
+}
+
+.dash-menu-link {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.dash-menu-link:hover, .dash-menu-link.active {
+  background-color: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+.dash-menu-link .icon {
+  font-size: 1.2rem;
+}
+
+/* Dashboard Content Area */
+.dash-content {
+  flex: 1;
+  padding: 2.5rem 3rem;
+  background: var(--background);
+  overflow-y: auto;
+}
+
+.dash-header {
+  margin-bottom: 2rem;
+}
+
+.dash-greeting {
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Profile Summary Pills Bar */
+.profile-summary-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+/* Main Cards Grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.today-workout-hero {
+  background: linear-gradient(135deg, #ffffff 0%, var(--surface-alt) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+
+.widget-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.widget-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.widget-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Weekly 7-Day Schedule */
+.week-schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.day-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 160px;
+  transition: var(--transition);
+  position: relative;
+  text-align: left;
+}
+
+.day-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.day-card.today {
+  border: 2px solid var(--primary);
+  background: #f0fdf4;
+}
+
+.day-card.completed {
+  background-color: var(--primary-light);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.day-name-tag {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.day-workout-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0.35rem 0;
+  line-height: 1.3;
+}
+
+.day-meta {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: auto;
+}
+
+.completion-status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
+}
+
+.status-done {
+  color: var(--primary-dark);
+}
+
+.status-pending {
+  color: var(--text-muted);
+}
+
+/* Mobile Bottom Navigation (Hidden on desktop) */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  height: 64px;
+  z-index: 99;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 0.5rem;
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.mobile-nav-item.active {
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
+.mobile-nav-item .icon {
+  font-size: 1.25rem;
+}

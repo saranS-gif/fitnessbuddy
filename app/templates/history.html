@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plan History & Revisions | FitBuddy AI</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <a href="/" class="brand">
+      ⚡ FitBuddy
+      <span class="brand-badge">HISTORY</span>
+    </a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="/dashboard">Dashboard</a></li>
+        <li><a href="/feedback">Improve Plan</a></li>
+        <li><a href="/history" style="color:var(--primary-light);">History</a></li>
+        <li id="nav-auth-container"></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div style="margin-bottom: 2rem;">
+      <h1 style="font-size: 2rem; font-weight: 800; color: var(--navy);">
+        Plan Revision History 📜
+      </h1>
+      <p style="color: var(--text-muted); font-size: 1rem;">
+        Every time you submit feedback to Gemini AI, an immutable version is stored. Compare how your fitness plan evolved over time.
+      </p>
+    </div>
+
+    <div id="history-container">
+      <div class="card loading-box">
+        <div class="spinner"></div>
+        <p>Loading version timeline...</p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 FitBuddy — AI Personal Fitness Companion.</p>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const userId = getStoredUserId();
+      const container = document.getElementById("history-container");
+
+      if (!userId) {
+        container.innerHTML = `
+          <div class="card" style="text-align:center; padding:3rem 1.5rem;">
+            <h3>No Plan History Found</h3>
+            <p style="color:var(--text-muted); margin-bottom:1.5rem;">Create a workout plan to begin tracking revisions.</p>
+            <a href="/onboarding" class="btn btn-primary">Create My Plan →</a>
+          </div>
+        `;
+        return;
+      }
+
+      try {
+        const res = await apiRequest(`/api/history/${userId}`);
+        const history = res.history || [];
+
+        if (history.length === 0) {
+          container.innerHTML = `
+            <div class="card" style="text-align:center; padding:3rem 1.5rem;">
+              <h3>No Revisions Recorded Yet</h3>
+              <p style="color:var(--text-muted); margin-bottom:1.5rem;">Submit feedback to evolve your current regimen into new versions.</p>
+              <a href="/feedback" class="btn btn-primary">Improve My Plan →</a>
+            </div>
+          `;
+          return;
+        }
+
+        let html = '<div style="display:flex; flex-direction:column; gap:1.5rem;">';
+        history.reverse().forEach((rev, idx) => {
+          const isLatest = idx === 0;
+          const plan = rev.plan || {};
+          const days = plan.days || [];
+
+          let daysSummary = "";
+          days.forEach(d => {
+            const isRest = d.type === "Rest";
+            daysSummary += `
+              <div style="background:#f8fafc; border:1px solid var(--border); border-radius:var(--radius-sm); padding:0.6rem 0.8rem; font-size:0.85rem;">
+                <strong>${d.day}:</strong> <span style="color:${isRest ? '#64748b' : 'var(--primary-dark)'};">${d.focus || (isRest ? 'Rest' : 'Workout')}</span>
+              </div>
+            `;
+          });
+
+          html += `
+            <div class="card" style="${isLatest ? 'border-color:var(--primary); box-shadow:0 0 0 1px var(--primary);' : ''}">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:0.75rem;">
+                <div>
+                  <span class="brand-badge" style="background:${isLatest ? 'var(--primary)' : 'var(--navy-muted)'}; margin-right:0.5rem;">
+                    VERSION ${rev.version} ${isLatest ? '(ACTIVE)' : ''}
+                  </span>
+                  <span style="font-size:0.85rem; color:var(--text-muted);">${rev.created_at || ''}</span>
+                </div>
+                ${!isLatest ? `<button class="btn btn-secondary btn-sm" onclick="restoreVersion(${rev.id})">Inspect This Version</button>` : ''}
+              </div>
+
+              <div style="margin-bottom:1rem;">
+                <strong>Trigger / Feedback:</strong>
+                <span style="color:var(--navy-light); font-style:italic;">"${rev.feedback || 'Initial Creation'}"</span>
+              </div>
+
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:0.5rem;">
+                ${daysSummary}
+              </div>
+            </div>
+          `;
+        });
+        html += '</div>';
+
+        container.innerHTML = html;
+
+      } catch (err) {
+        container.innerHTML = `
+          <div class="card" style="text-align:center; padding:3rem 1.5rem;">
+            <h3>Unable to Load History</h3>
+            <p style="color:var(--text-muted); margin-bottom:1.5rem;">${err.message || 'Error communicating with backend.'}</p>
+            <a href="/dashboard" class="btn btn-secondary">Return to Dashboard</a>
+          </div>
+        `;
+      }
+    });
+
+    function restoreVersion(revId) {
+      showToast("Inspecting historical version snapshot.", "info");
+    }
+  </script>
+  {% include "auth_modal.html" %}
+</body>
+</html>
