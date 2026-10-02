@@ -59,26 +59,36 @@ async function submitFeedback(event) {
       })
     });
 
-    // Update stored plan with latest
-    if (res.plan) {
-      localStorage.setItem("fitbuddy_plan", JSON.stringify(res.plan));
+    // Preserve original for comparison
+    const previousPlan = localStorage.getItem("fitbuddy_plan");
+    if (res.original_plan) {
+      localStorage.setItem("fitbuddy_comparison_original", JSON.stringify(res.original_plan));
+    } else if (previousPlan) {
+      localStorage.setItem("fitbuddy_comparison_original", previousPlan);
     }
 
-    // Sync to Cloud Firestore
+    // Store updated plan
+    if (res.plan) {
+      localStorage.setItem("fitbuddy_comparison_updated", JSON.stringify(res.plan));
+      localStorage.setItem("fitbuddy_plan", JSON.stringify(res.plan));
+    }
+    localStorage.setItem("fitbuddy_comparison_feedback", feedbackText);
+
+    // Sync to Cloud Firestore if enabled
     if (window.FitBuddyFirebase && window.FitBuddyFirebase.syncFeedbackToFirestore) {
       window.FitBuddyFirebase.syncFeedbackToFirestore(currentPlanId, feedbackText, res.plan);
     }
 
-    showToast("Plan successfully updated with your feedback!", "success");
+    showToast("Plan successfully calibrated! Opening comparison...", "success");
     if (statusEl) {
-      statusEl.textContent = "Success! Your updated plan has been saved as a new version.";
+      statusEl.textContent = "Success! Your calibrated plan is ready. Opening comparison review...";
       statusEl.style.color = "var(--primary-dark)";
     }
 
-    // Redirect to dashboard to see updated plan
+    // Redirect to Plan Comparison / Revision View
     setTimeout(() => {
-      window.location.href = "/dashboard";
-    }, 800);
+      window.location.href = "/comparison";
+    }, 700);
 
   } catch (err) {
     btn.disabled = false;

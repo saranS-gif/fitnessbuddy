@@ -1,6 +1,7 @@
 import os
 import json
 import logging
+from datetime import datetime, timezone
 from contextlib import asynccontextmanager
 from typing import Dict, Any, Optional
 from fastapi import FastAPI, Request, Depends, HTTPException, status, Form
@@ -95,26 +96,89 @@ def page_workout(request: Request):
 
 
 @app.get("/feedback", response_class=HTMLResponse)
+@app.get("/feedback/", response_class=HTMLResponse)
 def page_feedback(request: Request):
     return templates.TemplateResponse(request=request, name="feedback.html")
 
 
+@app.get("/comparison", response_class=HTMLResponse)
+@app.get("/comparison/", response_class=HTMLResponse)
+@app.get("/plan-comparison", response_class=HTMLResponse)
+@app.get("/plan-comparison/", response_class=HTMLResponse)
+@app.get("/feedback/updated-plan", response_class=HTMLResponse)
+@app.get("/feedback/updated-plan/", response_class=HTMLResponse)
+def page_comparison(request: Request):
+    return templates.TemplateResponse(request=request, name="comparison.html")
+
+
 @app.get("/history", response_class=HTMLResponse)
+@app.get("/history/", response_class=HTMLResponse)
 def page_history(request: Request):
     return templates.TemplateResponse(request=request, name="history.html")
 
 
 @app.get("/admin", response_class=HTMLResponse)
+@app.get("/admin/", response_class=HTMLResponse)
+@app.get("/admin-portal", response_class=HTMLResponse)
+@app.get("/admin-portal/", response_class=HTMLResponse)
+@app.get("/portal", response_class=HTMLResponse)
+@app.get("/portal/", response_class=HTMLResponse)
+@app.get("/admin/dashboard", response_class=HTMLResponse)
+@app.get("/admin/dashboard/", response_class=HTMLResponse)
 def page_admin(request: Request, db: Session = Depends(get_db)):
     users = WorkoutService.list_users(db)
     total_plans = db.query(WorkoutPlan).count()
+    
+    users_data = []
+    for u in users:
+        plan_id = None
+        plan_summary = ""
+        days_count = 0
+        latest_plan = None
+        if hasattr(u, "plans") and u.plans:
+            latest_plan = u.plans[0]
+        elif hasattr(u, "workout_plans") and u.workout_plans:
+            latest_plan = u.workout_plans[0]
+            
+        if latest_plan:
+            plan_id = latest_plan.id
+            try:
+                p_content = json.loads(latest_plan.updated_plan or latest_plan.original_plan)
+                plan_summary = p_content.get("summary", "Custom AI Regimen")
+                days_count = len(p_content.get("days", []))
+            except Exception:
+                plan_summary = "Custom Workout"
+                days_count = 7
+                
+        users_data.append({
+            "id": u.id,
+            "name": u.name,
+            "age": u.age,
+            "weight": u.weight,
+            "height": getattr(u, "height", 170.0),
+            "goal": u.goal,
+            "intensity": u.intensity,
+            "experience": getattr(u, "experience", "Intermediate"),
+            "location": getattr(u, "location", getattr(u, "workout_location", "Home")),
+            "preferred_days": u.preferred_days,
+            "created_at": u.created_at.strftime("%b %d, %Y") if getattr(u, "created_at", None) else "Recent",
+            "plan_id": plan_id,
+            "plan_summary": plan_summary,
+            "days_count": days_count
+        })
+
     return templates.TemplateResponse(
         request=request,
         name="admin.html",
         context={
             "users": users,
+            "users_json": json.dumps(users_data),
             "total_users": len(users),
-            "total_plans": total_plans
+            "total_plans": total_plans,
+            "gemini_active": bool(settings.GEMINI_API_KEY),
+            "gemini_model": settings.GEMINI_MODEL,
+            "db_type": "SQLite Telemetry",
+            "app_version": "2.0.0"
         }
     )
 
@@ -170,10 +234,13 @@ def api_feedback(req: FeedbackRequest, db: Session = Depends(get_db)):
     try:
         plan_obj = WorkoutService.update_plan_with_feedback(db, req.plan_id, req.feedback)
         updated_plan = json.loads(plan_obj.updated_plan) if plan_obj.updated_plan else {}
+        orig_plan = json.loads(plan_obj.original_plan) if plan_obj.original_plan else {}
         return {
             "success": True,
             "plan_id": plan_obj.id,
-            "plan": updated_plan
+            "plan": updated_plan,
+            "original_plan": orig_plan,
+            "feedback": req.feedback
         }
     except Exception as e:
         logger.error(f"Feedback application failed: {e}", exc_info=True)
@@ -266,6 +333,49 @@ def admin_delete_user(user_id: int, db: Session = Depends(get_db)):
     return RedirectResponse(url="/admin", status_code=status.HTTP_303_SEE_OTHER)
 
 
+@app.get("/admin/export")
+def admin_export_data(db: Session = Depends(get_db)):
+    """Exports all athlete records and their workout plans as JSON."""
+    users = WorkoutService.list_users(db)
+    export_payload = []
+    for u in users:
+        u_plans = []
+        user_plan_list = getattr(u, "plans", []) or getattr(u, "workout_plans", [])
+        for p in user_plan_list:
+            try:
+                active = json.loads(p.updated_plan or p.original_plan)
+            except Exception:
+                active = {}
+            u_plans.append({
+                "plan_id": p.id,
+                "created_at": p.created_at.isoformat() if p.created_at else None,
+                "plan": active
+            })
+        export_payload.append({
+            "id": u.id,
+            "name": u.name,
+            "age": u.age,
+            "weight": u.weight,
+            "height": getattr(u, "height", 170.0),
+            "goal": u.goal,
+            "intensity": u.intensity,
+            "experience": getattr(u, "experience", "Intermediate"),
+            "location": getattr(u, "location", "Home"),
+            "preferred_days": u.preferred_days,
+            "created_at": u.created_at.isoformat() if u.created_at else None,
+            "plans": u_plans
+        })
+    return JSONResponse(
+        content={"athletes": export_payload, "exported_at": datetime.now(timezone.utc).isoformat()},
+        headers={"Content-Disposition": "attachment; filename=fitbuddy_athletes_export.json"}
+    )
+
+
 @app.get("/health")
 def health():
     return {"status": "healthy", "service": "FitBuddy AI"}
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

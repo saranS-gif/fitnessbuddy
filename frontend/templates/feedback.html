@@ -28,14 +28,6 @@
       transform: translateY(-1px);
     }
 
-    .plan-preview-box {
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 1.25rem;
-      margin-bottom: 1.5rem;
-    }
-
     .step-pill {
       display: inline-flex;
       align-items: center;
@@ -69,7 +61,6 @@
 
   <main class="container-sm" style="padding-top: 2.5rem; padding-bottom: 4rem;">
     
-    <!-- Header -->
     <div style="text-align: center; margin-bottom: 2rem;">
       <span class="hero-tag">⚡ Adaptive AI Feedback Loop</span>
       <h1 style="font-size: 2.25rem; font-weight: 800; color: var(--navy); margin-top: 0.6rem; margin-bottom: 0.5rem;">
@@ -95,7 +86,6 @@
       </p>
 
       <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;" id="current-plan-badges">
-        <!-- Rendered by JS -->
       </div>
     </div>
 
@@ -111,7 +101,6 @@
                     placeholder="e.g. Add 15 minutes of cardio on upper body days, make squats easier on my knees, and give me a full rest day on Wednesday..." required></textarea>
         </div>
 
-        <!-- Quick Suggestion Chips -->
         <div class="form-group">
           <label class="form-label" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.6rem;">
             Quick Suggestions (click to add):
@@ -161,11 +150,9 @@
     <p>© 2026 FitBuddy — AI Personal Fitness Companion. Built with FastAPI & Google Gemini AI.</p>
   </footer>
 
-  {% include "auth_modal.html" %}
   <script src="/static/js/app.js"></script>
   <script src="/static/js/feedback.js"></script>
   <script>
-    // Populate active plan preview on load
     document.addEventListener("DOMContentLoaded", () => {
       try {
         const storedPlanStr = localStorage.getItem("fitbuddy_plan");

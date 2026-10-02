@@ -92,6 +92,16 @@
       border-bottom: none;
     }
 
+    .badge-diff-added {
+      background: #dcfce7;
+      color: #15803d;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.15rem 0.45rem;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+    }
+
     .day-selector-tabs {
       display: flex;
       gap: 0.5rem;
@@ -141,6 +151,7 @@
 
   <main class="container" style="padding-top: 2rem; padding-bottom: 4rem;">
 
+    <!-- Top Action Bar -->
     <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
       <div>
         <span class="hero-tag" style="background: var(--primary-bg); color: var(--primary-dark); border-color: rgba(16, 185, 129, 0.3);">
@@ -280,6 +291,7 @@
     let selectedDayFilter = "all";
 
     document.addEventListener("DOMContentLoaded", async () => {
+      // 1. Check local comparison storage
       const storedFeedback = localStorage.getItem("fitbuddy_comparison_feedback") || 
                              localStorage.getItem("fitbuddy_feedback_text") || 
                              "Add more cardio and adjust intensity";
@@ -299,6 +311,7 @@
         }
       }
 
+      // 2. Fallback: fetch from API via plan id or user id
       const planId = getStoredPlanId();
       const userId = getStoredUserId();
 
@@ -352,6 +365,7 @@
         return;
       }
 
+      // Populate nutrition cards
       if (baselinePlan.nutrition) {
         document.getElementById("baseline-nutrition-text").innerText = 
           typeof baselinePlan.nutrition === "string" ? baselinePlan.nutrition : (baselinePlan.nutrition.tips || "Balanced protein and carb split.");
@@ -364,7 +378,9 @@
       const baseDays = baselinePlan.days || [];
       const calDays = calibratedPlan.days || [];
 
+      // Render Baseline Column
       renderColumn("baseline-col-content", baseDays, false);
+      // Render Calibrated Column
       renderColumn("calibrated-col-content", calDays, true);
     }
 

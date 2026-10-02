@@ -31,6 +31,14 @@
       "destination": "/frontend/templates/feedback.html"
     },
     {
+      "source": "/comparison",
+      "destination": "/frontend/templates/comparison.html"
+    },
+    {
+      "source": "/plan-comparison",
+      "destination": "/frontend/templates/comparison.html"
+    },
+    {
       "source": "/history",
       "destination": "/frontend/templates/history.html"
     },

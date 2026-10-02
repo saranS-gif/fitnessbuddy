@@ -99,26 +99,89 @@ def page_workout(request: Request):
 
 
 @app.get("/feedback", response_class=HTMLResponse)
+@app.get("/feedback/", response_class=HTMLResponse)
 def page_feedback(request: Request):
     return templates.TemplateResponse(request=request, name="feedback.html")
 
 
+@app.get("/comparison", response_class=HTMLResponse)
+@app.get("/comparison/", response_class=HTMLResponse)
+@app.get("/plan-comparison", response_class=HTMLResponse)
+@app.get("/plan-comparison/", response_class=HTMLResponse)
+@app.get("/feedback/updated-plan", response_class=HTMLResponse)
+@app.get("/feedback/updated-plan/", response_class=HTMLResponse)
+def page_comparison(request: Request):
+    return templates.TemplateResponse(request=request, name="comparison.html")
+
+
 @app.get("/history", response_class=HTMLResponse)
+@app.get("/history/", response_class=HTMLResponse)
 def page_history(request: Request):
     return templates.TemplateResponse(request=request, name="history.html")
 
 
 @app.get("/admin", response_class=HTMLResponse)
+@app.get("/admin/", response_class=HTMLResponse)
+@app.get("/admin-portal", response_class=HTMLResponse)
+@app.get("/admin-portal/", response_class=HTMLResponse)
+@app.get("/portal", response_class=HTMLResponse)
+@app.get("/portal/", response_class=HTMLResponse)
+@app.get("/admin/dashboard", response_class=HTMLResponse)
+@app.get("/admin/dashboard/", response_class=HTMLResponse)
 def page_admin(request: Request, db: Session = Depends(get_db)):
     users = WorkoutService.list_users(db)
     total_plans = db.query(WorkoutPlan).count()
+    
+    users_data = []
+    for u in users:
+        plan_id = None
+        plan_summary = ""
+        days_count = 0
+        latest_plan = None
+        if hasattr(u, "plans") and u.plans:
+            latest_plan = u.plans[0]
+        elif hasattr(u, "workout_plans") and u.workout_plans:
+            latest_plan = u.workout_plans[0]
+            
+        if latest_plan:
+            plan_id = latest_plan.id
+            try:
+                p_content = json.loads(latest_plan.updated_plan or latest_plan.original_plan)
+                plan_summary = p_content.get("summary", "Custom AI Regimen")
+                days_count = len(p_content.get("days", []))
+            except Exception:
+                plan_summary = "Custom Workout"
+                days_count = 7
+                
+        users_data.append({
+            "id": u.id,
+            "name": u.name,
+            "age": u.age,
+            "weight": u.weight,
+            "height": getattr(u, "height", 170.0),
+            "goal": u.goal,
+            "intensity": u.intensity,
+            "experience": getattr(u, "experience", "Intermediate"),
+            "location": getattr(u, "location", getattr(u, "workout_location", "Home")),
+            "preferred_days": u.preferred_days,
+            "created_at": u.created_at.strftime("%b %d, %Y") if getattr(u, "created_at", None) else "Recent",
+            "plan_id": plan_id,
+            "plan_summary": plan_summary,
+            "days_count": days_count
+        })
+
     return templates.TemplateResponse(
         request=request,
         name="admin.html",
         context={
             "users": users,
+            "users_json": json.dumps(users_data),
             "total_users": len(users),
-            "total_plans": total_plans
+            "total_plans": total_plans,
+            "gemini_active": bool(settings.GEMINI_API_KEY),
+            "gemini_model": settings.GEMINI_MODEL,
+            "db_type": "SQLite Telemetry",
+            "app_version": "2.0.0"
         }
     )
 
