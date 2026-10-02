@@ -108,6 +108,31 @@ function updateAuthUI(user) {
   }
 }
 
+// Auto-switch from 127.0.0.1 to localhost for Firebase Auth compatibility
+if (window.location.hostname === "127.0.0.1") {
+  window.location.hostname = "localhost";
+}
+
+function formatAuthError(error) {
+  if (!error) return "Authentication failed";
+  if (error.code === "auth/unauthorized-domain") {
+    return "Please access the app at http://localhost:8000 for Firebase Auth.";
+  }
+  if (error.code === "auth/operation-not-allowed") {
+    return "Please enable this sign-in provider in Firebase Console under Authentication > Sign-in method.";
+  }
+  if (error.code === "auth/popup-closed-by-user") {
+    return "Sign-in popup was closed before completing.";
+  }
+  if (error.code === "auth/invalid-credential" || error.code === "auth/wrong-password" || error.code === "auth/user-not-found") {
+    return "Invalid email or password.";
+  }
+  if (error.code === "auth/email-already-in-use") {
+    return "An account with this email already exists. Please sign in instead.";
+  }
+  return error.message || "Authentication failed";
+}
+
 // Authentication Actions
 export async function signInGoogle() {
   try {
@@ -116,7 +141,7 @@ export async function signInGoogle() {
     if (window.showToast) window.showToast(`Welcome back, ${result.user.displayName || 'Athlete'}!`, "success");
     return result.user;
   } catch (error) {
-    if (window.showToast) window.showToast(error.message || "Google sign-in failed", "error");
+    if (window.showToast) window.showToast(formatAuthError(error), "error");
     throw error;
   }
 }
@@ -128,7 +153,7 @@ export async function loginEmail(email, password) {
     if (window.showToast) window.showToast("Signed in successfully!", "success");
     return userCredential.user;
   } catch (error) {
-    if (window.showToast) window.showToast(error.message || "Login failed", "error");
+    if (window.showToast) window.showToast(formatAuthError(error), "error");
     throw error;
   }
 }
@@ -140,7 +165,7 @@ export async function registerEmail(email, password) {
     if (window.showToast) window.showToast("Account created successfully!", "success");
     return userCredential.user;
   } catch (error) {
-    if (window.showToast) window.showToast(error.message || "Registration failed", "error");
+    if (window.showToast) window.showToast(formatAuthError(error), "error");
     throw error;
   }
 }

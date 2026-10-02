@@ -44,6 +44,17 @@ app.mount("/static", StaticFiles(directory=static_dir), name="static")
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
 
+@app.middleware("http")
+async def ensure_localhost_middleware(request: Request, call_next):
+    # Firebase Auth requires 'localhost' rather than '127.0.0.1' by default.
+    # Automatically redirect any 127.0.0.1 requests to localhost.
+    host = request.headers.get("host", "")
+    if host.startswith("127.0.0.1"):
+        new_url = str(request.url).replace("127.0.0.1", "localhost", 1)
+        return RedirectResponse(url=new_url, status_code=307)
+    return await call_next(request)
+
+
 # ==========================================
 # PAGE ROUTES (Jinja2 HTML)
 # ==========================================
